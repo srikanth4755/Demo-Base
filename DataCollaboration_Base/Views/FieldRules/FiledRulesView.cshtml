@@ -1,0 +1,1092 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+@{
+    ViewBag.Title = "FiledRules";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .center {
+        align-content: center;
+    }
+    .ui-widget input {
+        border-radius: 0px !important;
+        height: 30px !important;
+    }
+
+</style>
+<div class="container" style="padding-right: 0px;">
+    <div id="notifications" class="pull-left"></div>
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div id="tab" class="btn-group pull-left nav nav-tabs" data-toggle="buttons-radio" role="tablist">
+                    <a href="#PartialViews" id="hrefPartialViews" class="btn btn-default active " role="tab" data-toggle="tab">Partial Views</a>
+                    <a href="#FieldRules" id="hrefFieldRules" class="btn btn-default" role="tab" data-toggle="tab">Field Rules</a>
+                    <a href="#NodeRules" id="hrefNodeRules" class="btn btn-default" role="tab" data-toggle="tab">Node Rules</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div id="PartialViews" class="col-sm-12 tab-pane active" style="overflow-x:auto">
+            <div class="row" style="max-width: 100%;padding-left: 15px;padding-top: 20px;">
+                <div class="col-sm-12" style="padding-left:0px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Partial Views </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    @Html.Label("Work flow", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                                    <div class="form-group">
+                                        @Html.DropDownList("ddlWorkflow", new List<SelectListItem> { new SelectListItem() { Text = "Select", Value = "Select" }, }, htmlAttributes: new { @class = "form-control input-sm DCformField" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="text-align: right;top:26px;">
+                                    <div class="form-inline form-group">
+                                        <label>Search : </label>
+                                        <input type="text" class="form-control" name="search" id="txtSearchPartialViews" style="width: 200px" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12" style=" padding-left: 0px;">
+                                <table id="grid"></table>
+                                <div id="pager">
+                                    <table id="footerNewRow" class="table-bordered" style="display:none;border: 0.1px solid #ccc;">
+                                        <tr role="row" class="jqgrow ui-row-ltr" style="width:100%;font-size:15px">
+                                            <td style="width: 154px"><input type="text" id="footerViewId" class="form-control footer-valid" name="ViewId" disabled="disabled" /></td>
+                                            <td style="width: 398px"><input type="text" id="footerViewName" class="form-control footer-valid" name="ViewName" value="" /></td>
+                                            <td style="width: 151px;" class="center" align="center"><input type="checkbox" id="footerIsApplicable" class="form-control footer-valid" name="IsApplicable" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 400px"><input type="text" id="footerHeaderLabel" class="form-control cal_total_grid footer-valid" name="HeaderLabel" value="" /></td>
+                                            <td style="width: 150px;text-align: center;" role="gridcell" title="" aria-describedby="jqGrid_"><a href="javascript:addRowPartialFields()" title="add record" class="glyphicon glyphicon-plus-sign"></a></td>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="FieldRules" class="col-sm-12 tab-pane">
+            <div class="row" style="max-width: 100%;padding-top: 15px;">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary" style="margin-left: 0px;margin-top: 5px;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Field Rules </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    @Html.Label("Work flow", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                                    <div class="form-group">
+                                        @Html.DropDownList("ddlWorkflowdet", new List<SelectListItem> { new SelectListItem() { Text = "Select", Value = "Select" }, }, htmlAttributes: new { @class = "form-control input-sm DCformField" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="text-align: right;top:26px;">                                   
+                                    <div class="form-inline form-group">
+                                        <label>Search : </label>
+                                        <input type="text" class="form-control" name="search" id="txtSearchFieldRules" style="width: 200px" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12" style=" padding-left: 0px;">
+                                <table id="gridFiledRules"></table>
+                                <div id="pagerFieldRules">
+                                    <table id="footerFieldRules" class="table-bordered" style="display:none;border:0.1px solid #ccc;">
+                                        <tr role="row" class="jqgrow ui-row-ltr" style="width:100%;font-size:15px">
+                                            <td style="width: 75px"><input type="text" id="footerFieldId" class="form-control footer-valid" name="FieldId" disabled="disabled" /></td>
+                                            <td style="width: 225px"><input type="text" id="footerViewNameRefonly" class="form-control footer-valid" name="ViewNameRefonly" value="" /></td>
+                                            <td style="width: 283px"><input type="text" id="ftrFieldName" class="form-control footer-valid" name="FieldName" value="" /></td>
+                                            <td style="width: 285px"><input type="text" id="footerFieldLabelValue" class="form-control cal_total_grid footer-valid" name="FieldLabelValue" value="" /></td>
+                                            <td style="width: 90px" align="center"><input type="checkbox" id="footerIsVisible" class="form-control footer-valid" name="IsVisible" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 109px" align="center"><input type="checkbox" id="footerIsReadOnly" class="form-control footer-valid" name="IsReadOnly" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 108px" align="center"><input type="checkbox" id="footerIsMandatory" class="form-control footer-valid" name="IsMandatory" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 282px"><input type="text" id="ftrClassName" class="form-control footer-valid" name="FieldId"  /></td>
+                                            <td style="width: 108px;text-align: center;" role="gridcell" title="" aria-describedby="jqGrid_"><a href="javascript:addRowFieldRules()" title="add record" class="glyphicon glyphicon-plus-sign"></a></td>
+</table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="NodeRules" class="col-sm-12 tab-pane">
+            <div class="row" style="max-width: 100%;padding-left: 15px;padding-top: 15px;">
+                <div class="col-sm-12" style="padding-left:0px;">
+                    <div class="panel panel-primary" style="margin-left: 0px;margin-top: 5px;">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Node Rules</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6">
+                                    @Html.Label("Work flow", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                                    <div class="form-group">
+                                        @Html.DropDownList("ddlWorkflowdetails", new List<SelectListItem> { new SelectListItem() { Text = "Select", Value = "Select" }, }, htmlAttributes: new { @class = "form-control input-sm DCformField" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="text-align: right;">
+                                    <div class="form-inline form-group">
+                                        <label>From Node : </label>
+                                        <input type="text" class="form-control" name="search" id="txtFromNodeId" style="width: 100px;height:30px" />
+                                        <label>To Node : </label>
+                                        <input type="text" class="form-control " name="search" id="txtToNodeId" style="width: 100px;height:30px" />
+                                        <input type="button" class="btn btn-primary" value="Copy" id="btnCopyNodes" style="height:31px"/>
+                                    </div>
+                                    <div class="form-inline form-group">
+                                        <label>Search : </label>
+                                        <input type="text" class="form-control" name="search" id="txtSearchNodeRules" style="width: 200px" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12" style=" padding-left: 0px;">
+                                <table id="gridRulesNodes"></table>
+                                <div id="pagerRulesNodes">
+                                    <table id="footerRulesNodes" class="table-bordered" style="display:none">
+                                        <tr role="row" class="jqgrow ui-row-ltr" style="width:100%;font-size:15px">
+                                            <td style="width: 106px"><input type="text" id="footerRuleNodeId" class="form-control footer-valid" name="RuleNodeId" disabled="disabled" /></td>
+                                            <td style="width: 79px"><input type="text" id="footerFieldid" class="form-control footer-valid" name="FieldId" value="" /></td>
+                                            <td style="width: 79px"><input type="text" id="footerNodeId" class="form-control footer-valid" name="NodeId" value="" /></td>
+                                            <td style="width: 132px"><input type="text" id="footerNodeLike" class="form-control cal_total_grid footer-valid" name="NodeLike" value="" /></td>
+                                            <td style="width: 198px"><input type="text" id="footerViewname" class="form-control footer-valid" name="ViewName" value="" /></td>
+                                            <td style="width: 265px"><input type="text" id="footerFieldname" class="form-control footer-valid" name="FieldName" value="" /></td>
+                                            <td style="width: 79px" align="center"><input type="checkbox" id="footerIsvisible" class="form-control footer-valid" name="IsVisible" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 106px" align="center"><input type="checkbox" id="footerIsReadonly" class="form-control footer-valid" name="IsReadOnly" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 106px" align="center"><input type="checkbox" id="footerIsMandatory" class="form-control footer-valid" name="IsMandatory" value="" style="height:15px;width:15px" /></td>
+                                            <td style="width: 132px"><input type="text" id="footerClassName" class="form-control cal_total_grid footer-valid" name="ClassName" value="" /></td>
+                                            <td style="width: 79px;text-align: center;" role="gridcell" title="" aria-describedby="jqGrid_"><a href="javascript:addRowRulesNodes()" title="add record" class="glyphicon glyphicon-plus-sign"></a></td>
+</table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Scripts.Render("~/Scripts/DCScripts/Utility.js")
+@Styles.Render("~/Content/ui.jqgrid.css")
+<script>
+
+    $(function () {
+        $("#hrefPartialViews").click(function () {
+            $("#hrefFieldRules").removeClass('active');
+            $("#hrefNodeRules").removeClass('active');
+        })
+        $("#hrefFieldRules").click(function () {
+            $("#hrefPartialViews").removeClass('active');
+            $("#hrefNodeRules").removeClass('active');
+        })
+        $("#hrefNodeRules").click(function () {
+            $("#hrefFieldRules").removeClass('active');
+            $("#hrefPartialViews").removeClass('active');
+        })
+    });
+    var requestGET = "GET";
+    var requestPOST = "POST";
+    var workflowId = 0;
+    var DelOptions = {
+        onclickSubmit: function (options, rowid) {
+            var rowData = jQuery(this).getRowData(rowid);
+            cellValue = rowData['ViewId'];
+            var url = '/FieldRules/DelPartialRules?ViewId=' + cellValue;
+            var data = MakeAjaxCall2("POST", false, url, '');        
+            deleteData(data);
+            $(".ui-icon-cancel").click();
+            $("#grid").delRowData(rowid);
+            getPartialFieldRules();
+        }
+    };
+    var DeleteFeildRules = {
+        onclickSubmit: function (options, rowid) {
+            var rowData = jQuery(this).getRowData(rowid);
+            cellValue = rowData['FieldId'];      
+            var url = '/FieldRules/DelFieldRules?FieldId=' + cellValue;
+            var data = MakeAjaxCall2("POST", false, url, '');
+            if (data != "0") {
+                $("#gridFiledRules").delRowData(rowid);
+                $('.alert').hide();
+                Notify("Data deleted Sucessfully", null, null, "success");                
+                $('#gridFiledRules').jqGrid('delRowData', rowid);
+                $(".ui-icon-cancel").click();
+                getFieldRules();
+            }
+            else {
+                $("#delmodgridFiledRules").hide();
+                $('.alert').hide();
+                Notify("Data delete failed", null, null, "warning");
+            }
+        }
+    };
+    var DeleteRulesNodes = {
+        onclickSubmit: function (options, rowid) {
+            var rowData = jQuery(this).getRowData(rowid);
+            cellValue = rowData['RuleNodeId'];
+        
+            var url = '/FieldRules/DelRulesNodes?RuleNodeId=' + cellValue;
+            var data = MakeAjaxCall2("POST", false, url, '');
+            if (data != "0") {
+                $("#gridRulesNodes").delRowData(rowid);
+                $('.alert').hide();
+                Notify("Data deleted Sucessfully", null, null, "success");
+                getRulesNodes();
+                $(".ui-icon-cancel").click();
+            }
+            else {
+                $('.alert').hide();
+                Notify("Data delete failed", null, null, "warning");
+            }
+
+        }
+    };
+    var partialFieldViews = {
+        Init: function () {
+            partialFieldViews.Workflowdetails();
+        },
+        Workflowdetails: function Workflowdetails() {
+            var url = "/FieldRules/GetWorkFlowId";
+            var data = MakeAjaxCall2(requestGET, false, url, '');
+            for (i = 0; i < data.length; i++) {
+                $("#ddlWorkflow").append($("<option />").val(data[i]).text(data[i]));
+                $("#ddlWorkflowdet").append($("<option />").val(data[i]).text(data[i]));
+                $("#ddlWorkflowdetails").append($("<option />").val(data[i]).text(data[i]));
+            }
+
+        },
+        GetPartilaFieldRuls: function GetPartilaFieldRuls() {
+
+        }
+    };
+    partialFieldViews.Init();
+    var dataObj = {
+        loadGrid: function (data, workflowId) {
+            jQuery('#grid').jqGrid('clearGridData')
+            jQuery('#grid').jqGrid('setGridParam', { data: data, page: 1 })
+            jQuery('#grid').trigger('reloadGrid');
+            $("#grid").jqGrid
+                ({
+                    datatype: "local",
+                    data: data,
+                    colNames: ['ViewId', 'View Name', 'IsApplicable', 'Header Label', 'Action'],
+                    colModel: [
+                        {
+                            labe: 'View Id',
+                            name: 'ViewId',
+                            width: 50,
+                            editable: false,
+                            className: "header_frst_column",
+                            cellEdit: false,
+                            sorttype: 'integer'
+                        },
+                        {
+                            labe: 'View Name',
+                            name: 'ViewName',
+                            width: 130,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            name: "IsApplicable", width: 50, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                          
+                        },
+                        {
+                            labe: 'Header Label',
+                            name: 'HeaderLabel',
+                            width: 130,
+                            editable: true,
+                            cellEdit: true,
+                        },
+                        {
+                            name: 'Edit Actions',
+                            search: false,
+                            index: 'userId', width: 50,
+                            sortable: false,
+                            formatter: "actions",
+                            formatoptions: {
+                                editbutton: true, editOption: {},
+                                onSuccess: true,
+                                afterSave: function (rowid, options) {
+                                    var rowData = jQuery(this).getRowData(rowid);
+                                    var obj = {};
+                                    obj.ViewId = rowData['ViewId'];
+                                    obj.workflowId = workflowId;
+                                    obj.ViewName = rowData['ViewName'];
+                                    obj.IsApplicable = rowData['IsApplicable'];
+                                    obj.HeaderLabel = rowData['HeaderLabel'];
+                                    var jsonString2 = JSON.stringify(obj);
+                                    var url = '/FieldRules/SavePartialRules';
+                                    var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonString2 }));
+                                    $("#grid").trigger("reloadGrid");
+                                    onSaveDetials(data);
+                                    $("#grid").trigger("reloadGrid");
+                                },
+                                delbutton: true, delOptions: DelOptions,
+                            },
+                        },
+                    ],
+                    search: true,
+                    pager: jQuery('#pager'),
+                    rowNum: 10,
+                    rowList: [5, 10, 20, 30, 40],
+                    height: '100%',
+                    viewrecords: true,
+                    caption: 'Partal Fields',
+                    sortname:'ViewId',                  
+                    reloadAfterSubmit: true,
+                    emptyrecords: 'No records to display',
+                    onCellSelect: function (rowid) {
+                        var rowData = $(this).jqGrid("getRowData", rowid);
+                        // now you can use rowData.name2, rowData.name3, rowData.name4 ,...
+                    },
+
+                    jsonReader:
+                        {
+                            root: "rows",
+                            page: "page",
+                            total: "total",
+                            records: "records",
+                            repeatitems: false,
+                            Id: "0"
+                        },
+                    autowidth: true,
+                    multiselect: false
+
+                })
+        },
+        editRow: function (id, iRow, iCol, e) {
+            $('#' + id).removeClass('success');
+            if (id && id !== lastSelection) {
+                var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', editrowid);
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+            }
+
+            $("#grid").jqGrid('editRow', id);
+            //  $("input, select", iCol.target).focus();
+
+            lastSelection = id;
+        },
+        addEmptyRow: function () {
+            var grid = $("#Grid");
+            var rowsperPage = parseInt(grid.getGridParam('rowNum'));
+            var gridlength = grid.jqGrid('getGridParam', 'data').length;
+            var curpage = parseInt($(".ui-pg-input").val());
+            var totPages = Math.ceil(gridlength / rowsperPage);
+
+            if (rowsperPage * totPages == gridlength) {
+                var id = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', id);
+                var row = dataObj.newrow();
+
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+                grid.trigger('reloadGrid');
+                lastSelection = newRowId;
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+                $('.glyphicon-step-forward').trigger('click');
+            } else {
+                $('.glyphicon-step-forward').trigger('click');
+                var row = dataObj.newrow();
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+            }
+
+            lastSelection = newRowId;
+            grid.jqGrid('saveRow', lastSelection);
+            grid.jqGrid('restoreRow', lastSelection);
+
+            var eid = $('.inline-edit-cell').parent().parent().prop('id')
+            grid.jqGrid('saveRow', eid);
+            grid.jqGrid('restoreRow', eid);
+            grid.jqGrid('editRow', newRowId);
+        },
+        onSelectRow: function (id) {
+            if (id && id !== lastSel) {
+                jQuery('#grid_id').restoreRow(lastSel);
+                lastSel = id;
+            }
+        }
+    };
+    var dataObj1 = {
+
+        loadGrid: function (data, workflowId) {
+            jQuery('#gridFiledRules').jqGrid('clearGridData')
+            jQuery('#gridFiledRules').jqGrid('setGridParam', { data: data, page: 1 })
+            jQuery('#gridFiledRules').trigger('reloadGrid');
+            $("#gridFiledRules").jqGrid
+                ({
+                    datatype: "local",
+                    data: data,
+                    colNames: ['FieldId', 'ViewName Refonly', 'FieldName', 'FieldLabel Value', 'IsVisible', 'IsReadOnly', 'IsMandatory','ClassName', 'Action'],
+                    //colModel takes the data from controller and binds to grid
+                    colModel: [
+                        {
+                            labe: 'FieldId',
+                            name: 'FieldId',
+                            width: 20,
+                            editable: false,
+                            className: "header_frst_column",
+                            cellEdit: false,
+                            sorttype: 'integer'
+                        },
+                        {
+                            labe: 'ViewName_Refonly',
+                            name: 'ViewName_Refonly',
+                            width: 60,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            labe: 'FieldName',
+                            name: 'FieldName',
+                            width: 75,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            labe: 'FieldLabelValue',
+                            name: 'FieldLabelValue',
+                            width: 75,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            name: "IsVisible", width: 25, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                           
+                        },
+                        {
+                            name: "IsReadOnly", width: 30, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                            
+                        },
+                        {
+                            name: "IsMandatory", width: 30, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                        
+                        },
+                        {
+                            labe: 'ClassName',
+                            name: 'ClassName',
+                            width: 75,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+
+                        },
+
+                        {
+                            name: 'Edit Actions',
+                            search: true,
+                            index: 'userId', width: 30,
+                            sortable: false,
+                            formatter: "actions",
+                            formatoptions: {
+                                editbutton: true, editOption: {},
+                                onSuccess: true,
+                                afterSave: function (rowid, options) {
+                                    var rowData = jQuery(this).getRowData(rowid);
+                                    var obj1 = {};
+                                    obj1.FieldId = rowData['FieldId'];
+                                    obj1.ViewName_Refonly = rowData['ViewName_Refonly'];
+                                    obj1.FieldName = rowData['FieldName'];
+                                    obj1.FieldLabelValue = rowData['FieldLabelValue'];
+                                    obj1.IsVisible = rowData['IsVisible'];
+                                    obj1.IsReadOnly = rowData['IsReadOnly'];
+                                    obj1.IsMandatory = rowData['IsMandatory'];
+                                    obj1.workflowId = workflowId;
+                                    obj1.ClassName = rowData['ClassName'];
+                                    var jsonString1 = JSON.stringify(obj1);
+                                    var url = '/FieldRules/SaveFieldRules';
+
+                                    var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonString1 }));
+                                    //subgrid.trigger("reloadGrid");
+                                    onSaveDetials(data);
+                                },
+                                delbutton: true, delOptions: DeleteFeildRules,
+                            },
+                        },
+                    ],
+                    pager: jQuery('#pagerFieldRules'),
+                    rowNum: 10,
+                    rowList: [5,10, 20, 30, 40],
+                    height: '100%',
+                    sortname: 'FieldId',
+                    viewrecords: true,
+                    caption: 'Fields Rules',
+                    emptyrecords: 'No records to display',
+                    jsonReader:
+                        {
+                            root: "rows",
+                            page: "page",
+                            total: "total",
+                            records: "records",
+                            repeatitems: false,
+                            Id: "0"
+                        },
+                    autowidth: true,
+                    multiselect: false
+
+                })
+        },
+        editRow: function (id, iRow, iCol, e) {
+            $('#' + id).removeClass('success');
+            if (id && id !== lastSelection) {
+
+                //if (!isValidEditRow(lastSelection)) {
+                //if (!isValidfootertRow()) {
+                //    return false;
+                //};
+                var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', editrowid);
+
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+            }
+
+            $("#ddlWorkflowdet").jqGrid('editRow', id);
+            //  $("input, select", iCol.target).focus();
+
+            lastSelection = id;
+        },
+        addEmptyRow: function () {
+            var grid = $("#ddlWorkflowdet");
+            var rowsperPage = parseInt(grid.getGridParam('rowNum'));
+            var gridlength = grid.jqGrid('getGridParam', 'data').length;
+            var curpage = parseInt($(".ui-pg-input").val());
+            var totPages = Math.ceil(gridlength / rowsperPage);
+
+            if (rowsperPage * totPages == gridlength) {
+                var id = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', id);
+                var row = dataObj1.newrow();
+
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+                grid.trigger('reloadGrid');
+                lastSelection = newRowId;
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+                $('.glyphicon-step-forward').trigger('click');
+            } else {
+                $('.glyphicon-step-forward').trigger('click');
+                var row = dataObj1.newrow();
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+            }
+
+            lastSelection = newRowId;
+            grid.jqGrid('saveRow', lastSelection);
+            grid.jqGrid('restoreRow', lastSelection);
+
+            var eid = $('.inline-edit-cell').parent().parent().prop('id')
+            grid.jqGrid('saveRow', eid);
+            grid.jqGrid('restoreRow', eid);
+            grid.jqGrid('editRow', newRowId);
+        },
+        onSelectRow: function (id) {
+            if (id && id !== lastSel) {
+                jQuery('#grid_id').restoreRow(lastSel);
+                lastSel = id;
+            }
+        }
+    };
+    var dataObj2 = {
+
+        loadGrid: function (data, workflowId) {
+            jQuery('#gridRulesNodes').jqGrid('clearGridData')
+            jQuery('#gridRulesNodes').jqGrid('setGridParam', { data: data, page: 1 })
+            jQuery('#gridRulesNodes').trigger('reloadGrid');
+            $("#gridRulesNodes").jqGrid
+                ({
+                    datatype: "local",
+                    data: data,
+                    colNames: ['RuleNodeId', 'Field Id', 'Node Id', 'Node Like', 'View Name', 'Field Name', 'IsVisible', 'IsReadOnly','IsMandatory', 'ClassName', 'Action'],
+                    colModel: [
+                        {
+                            labe: 'RuleNodeId',
+                            name: 'RuleNodeId',
+                            width: 40,
+                            editable: false,
+                            className: "header_frst_column",
+                            cellEdit: false,
+                            sorttype: 'integer'
+                        },
+                        {
+                            labe: 'FieldId',
+                            name: 'FieldId',
+                            width: 30,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                            sorttype: 'integer'
+                        },
+                        {
+                            labe: 'NodeId',
+                            name: 'NodeId',
+                            width: 30,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                            sorttype: 'integer'
+                        },
+                        {
+                            labe: 'NodeLike',
+                            name: 'NodeLike',
+                            width: 50,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                           
+                        },
+                        {
+                            labe: 'ViewName',
+                            name: 'ViewName',
+                            width: 75,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            labe: 'FieldName',
+                            name: 'FieldName',
+                            width: 100,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            name: "IsVisible", width: 30, align: "center", editable: true,
+
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                            
+                        },
+                        {
+                            name: "IsReadOnly", width: 40, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+                           
+                        },
+                        {
+                            name: "IsMandatory", width: 40, align: "center", editable: true,
+                            edittype: 'checkbox', editoptions: { value: "True:False" },
+                            formatter: "checkbox", formatoptions: { disabled: true }
+
+                        },
+                        {
+                            labe: 'ClassName',
+                            name: 'ClassName',
+                            width: 50,
+                            editable: true,
+                            className: "header_frst_column",
+                            cellEdit: true,
+                        },
+                        {
+                            name: 'Edit Actions',
+                            width: 60,
+                            search: false,
+                            index: 'userId', width: 30,
+                            sortable: false,
+                            formatter: "actions",
+                            formatoptions: {
+                                editbutton: true, editOption: {},
+                                onSuccess: true,
+                                afterSave: function (rowid, options) {
+                                    var rowData = jQuery(this).getRowData(rowid);
+                                    var obj2 = {};
+                                    //RuleNodeId,FieldId,NodeId,NodeLike,ViewName,FieldName,IsVisible,IsReadonly,ClassName
+                                    obj2.RuleNodeId = rowData['RuleNodeId'];
+                                    obj2.FieldId = rowData['FieldId'];
+                                    obj2.NodeId = rowData['NodeId'];
+                                    obj2.NodeLike = rowData['NodeLike'];
+                                    obj2.ViewName = rowData['ViewName'];
+                                    obj2.FieldName = rowData['FieldName'];
+                                    obj2.IsVisible = rowData['IsVisible'];
+                                    obj2.IsReadOnly = rowData['IsReadOnly'];
+                                    obj2.IsMandatory = rowData['IsMandatory'];
+                                    obj2.ClassName = rowData['ClassName'];
+                                    obj2.workflowId = workflowId;
+                                    var jsonStr = JSON.stringify(obj2);
+                                    var url = '/FieldRules/SaveFieldsNodes';
+
+                                    var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonStr }));
+                                    // subgrid.trigger("reloadGrid");
+                                    onSaveDetials(data);
+                                },
+                                delbutton: true, delOptions: DeleteRulesNodes
+                            },
+                        },
+                    ],
+                    search: true,
+                    //loadonce: true,
+                    rowNum: 10,
+                    height: '100%',
+                    rowList: [5,10, 20, 30, 40],
+                    pager: '#pagerRulesNodes',
+                    sortname: 'RuleNodeId',
+                    caption: 'Nodes Rules',
+                    viewrecords: true,
+                    sortorder: "asc",
+                    jsonReader:
+                        {
+                            root: "rows",
+                            page: "page",
+                            total: "total",
+                            records: "records",
+                            repeatitems: false,
+                            Id: "0"
+                        },
+                    autowidth: true,
+                    multiselect: false
+                })
+        },
+        editRow: function (id, iRow, iCol, e) {
+            $('#' + id).removeClass('success');
+            if (id && id !== lastSelection) {
+
+                //if (!isValidEditRow(lastSelection)) {
+                //if (!isValidfootertRow()) {
+                //    return false;
+                //};
+                var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', editrowid);
+
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+            }
+
+            $("#gridRulesNodes").jqGrid('editRow', id);
+            //  $("input, select", iCol.target).focus();
+
+            lastSelection = id;
+        },
+        addEmptyRow: function () {
+            var grid = $("#gridRulesNodes");
+            var rowsperPage = parseInt(grid.getGridParam('rowNum'));
+            var gridlength = grid.jqGrid('getGridParam', 'data').length;
+            var curpage = parseInt($(".ui-pg-input").val());
+            var totPages = Math.ceil(gridlength / rowsperPage);
+
+            if (rowsperPage * totPages == gridlength) {
+                var id = $('.inline-edit-cell').parent().parent().prop('id');
+                grid.jqGrid('saveRow', id);
+                var row = dataObj2.newrow();
+
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+                grid.trigger('reloadGrid');
+                lastSelection = newRowId;
+                grid.jqGrid('saveRow', lastSelection);
+                grid.jqGrid('restoreRow', lastSelection);
+                $('.glyphicon-step-forward').trigger('click');
+            } else {
+                $('.glyphicon-step-forward').trigger('click');
+                var row = dataObj2.newrow();
+                var newRowId = row.rowid;
+                grid.jqGrid('addRowData', newRowId, row);
+            }
+
+            lastSelection = newRowId;
+            grid.jqGrid('saveRow', lastSelection);
+            grid.jqGrid('restoreRow', lastSelection);
+
+            var eid = $('.inline-edit-cell').parent().parent().prop('id')
+            grid.jqGrid('saveRow', eid);
+            grid.jqGrid('restoreRow', eid);
+            grid.jqGrid('editRow', newRowId);
+        },
+        onSelectRow: function (id) {
+            if (id && id !== lastSel) {
+                jQuery('#gridRulesNodes').restoreRow(lastSel);
+                lastSel = id;
+            }
+        }
+    }
+    $("#ddlWorkflow").change(function () {
+        if ($("#ddlWorkflow").val() != "Select") {
+            $("#footerNewRow").show();
+            getPartialFieldRules();
+        }
+    });
+
+    $("#ddlWorkflowdet").change(function () {
+        if ($("#ddlWorkflowdet").val() != "Select") {
+            $("#footerFieldRules").show();
+            getFieldRules();
+        }
+    });
+
+    $("#ddlWorkflowdetails").change(function () {
+        if ($("#ddlWorkflowdetails").val() != "Select") {
+            $("#footerRulesNodes").show();
+            getRulesNodes()
+        }
+    });
+
+    function getPartialFieldRules() {
+        var workflowId = ($("#ddlWorkflow").val()).split('-');
+        var url = "/FieldRules/GetPartialRulesJson?WorkflowId=" + workflowId[0];
+        var data = MakeAjaxCall2("GET", false, url, '');
+        dataObj.loadGrid(data, workflowId[0]);
+    };
+
+    function getFieldRules() {
+        var workflowId = ($("#ddlWorkflowdet").val()).split('-');
+        var url = "/FieldRules/GetFieldRulesJson?WorkflowId=" + workflowId[0];
+        var data = MakeAjaxCall2(requestGET, false, url, '');
+        dataObj1.loadGrid(data, workflowId[0]);
+    };
+
+    function getRulesNodes() {
+        var workflowId = ($("#ddlWorkflowdetails").val()).split('-');
+        var url = "/FieldRules/GetRulesNodesJson?WorkflowId=" + workflowId[0];
+        var data = MakeAjaxCall2(requestGET, false, url, '');
+        dataObj2.loadGrid(data, workflowId[0]);
+    };
+
+    function onSaveDetials(data) {
+        if (data != "0") {
+            $('.alert').hide();
+            Notify("Data Saved Sucessfully", null, null, "success");
+        }
+        else {
+            $('.alert').hide();
+            Notify("Data save failed", null, null, "warning");
+        }
+    };
+
+    function deleteData(data) {
+        if (data != "0") {
+            $('.alert').hide();
+            Notify("Data deleted Sucessfully", null, null, "success");
+        }
+        else {
+            $('.alert').hide();
+            Notify("Data delete failed", null, null, "warning");
+        }
+    };
+
+    function addRowPartialFields(id) {
+        var grid = $("#grid");
+        var gridCount = jQuery("#grid").jqGrid('getGridParam', 'data').length;
+        var lastrow;
+
+        var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+        $("#grid").jqGrid('saveRow', editrowid);
+        $("#grid").jqGrid('restoreRow', editrowid);
+        lastSelection = "";
+        var ViewId = 0;
+        var ViewName = $("#footerViewName").val();
+        var IsApplicable = $("#footerIsApplicable").prop("checked");
+        var HeaderLabel = $("#footerHeaderLabel").val();
+        var workflowId = ($("#ddlWorkflow").val()).split('-');
+
+        if (ViewName.length > 0 && HeaderLabel.length > 0) {
+            $('.footer-valid').removeClass("error");
+            var obj = {};
+            obj.ViewId = ViewId;
+            obj.ViewName = ViewName;
+            obj.IsApplicable = IsApplicable
+            obj.HeaderLabel = HeaderLabel;
+            obj.workflowId = workflowId[0];
+            var jsonStrings = JSON.stringify(obj);
+            var url = '/FieldRules/SavePartialRules';
+            var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonStrings }));
+            $("#grid").trigger("reloadGrid");
+            onSaveDetials(data);
+            getPartialFieldRules();
+            clearFooter();
+        }
+        else {
+            $('.footer-valid').each(function () {
+                if ($(this).val().length == 0 && this.disabled == false) {
+                    $(this).addClass("error");
+                } else {
+                    $(this).removeClass("error");
+                }
+            });
+            return false;
+        }
+
+    };
+
+    function addRowFieldRules(id) {
+        var grid = $("#gridFiledRules");
+        var gridCount = jQuery("#gridFiledRules").jqGrid('getGridParam', 'data').length;
+        var lastrow;
+
+        var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+        $("#gridFiledRules").jqGrid('saveRow', editrowid);
+        $("#gridFiledRules").jqGrid('restoreRow', editrowid);
+        lastSelection = "";
+        var FieldId = 0;
+        var ViewName_Refonly = $("#footerViewNameRefonly").val();
+        var FieldName = $("#ftrFieldName").val();
+        var FieldLabelValue = $("#footerFieldLabelValue").val();
+        var IsVisible = $("#footerIsVisible").prop("checked");
+        var IsReadOnly = $("#footerIsReadOnly").prop("checked");
+        var IsMandatory = $("#footerIsMandatory").prop("checked");
+        var workflowId = ($("#ddlWorkflowdet").val()).split('-');
+        var ClassName = $("#ftrClassName").val();
+
+        if (ViewName_Refonly.length > 0 && FieldName.length > 0 && FieldLabelValue.length > 0 && workflowId.length > 0) {
+            $('.footer-valid').removeClass("error");
+            var obj = {};
+            obj.FieldId = FieldId;
+            obj.ViewName_Refonly = ViewName_Refonly;
+            obj.FieldLabelValue = FieldLabelValue
+            obj.IsVisible = IsVisible;
+            obj.FieldName = FieldName;
+            obj.IsReadOnly = IsReadOnly;
+            obj.IsMandatory = IsMandatory;
+            obj.workflowId = workflowId[0];
+            obj.ClassName = ClassName;
+
+            var jsonStrings = JSON.stringify(obj);
+            var url = '/FieldRules/SaveFieldRules';
+            var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonStrings }));
+            getFieldRules();
+            onSaveDetials(data);
+            clearFooter();
+        }
+        else {
+            $('.footer-valid').each(function () {
+                if ($(this).val().length == 0 && this.disabled == false) {
+                    $(this).addClass("error");
+                } else {
+                    $(this).removeClass("error");
+                }
+            });
+            return false;
+        }
+
+    };
+
+    function addRowRulesNodes(id) {
+        var grid = $("#gridRulesNodes");
+        var gridCount = jQuery("#gridRulesNodes").jqGrid('getGridParam', 'data').length;
+        var lastrow;
+
+        var editrowid = $('.inline-edit-cell').parent().parent().prop('id');
+        $("#gridRulesNodes").jqGrid('saveRow', editrowid);
+        $("#gridRulesNodes").jqGrid('restoreRow', editrowid);
+        lastSelection = "";
+        var RuleNodeId = 0;
+        var FieldId = $("#footerFieldid").val();
+        var NodeId = $("#footerNodeId").val();
+        var NodeLike = $("#footerNodeLike").val();
+        var ViewName = $("#footerViewname").val();
+        var FieldName = $("#footerFieldname").val();
+        var IsVisible = $("#footerIsvisible").prop("checked");
+        var IsReadOnly = $("#footerIsReadonly").prop("checked");
+        var IsMandatory = $("#footerIsMandatory").prop("checked");
+        var ClassName = $("#footerClassName").val();
+        var workflowId = ($("#ddlWorkflowdetails").val()).split('-');
+
+        if (FieldId.length > 0 && NodeId.length > 0 && ViewName.length > 0 && FieldName.length > 0) {
+            $('.footer-valid').removeClass("error");
+            var obj = {};
+            obj.RuleNodeId = RuleNodeId;
+            obj.FieldId = FieldId;
+            obj.NodeId = NodeId
+            obj.NodeLike = NodeLike;
+            obj.ViewName = ViewName;
+            obj.FieldName = FieldName;
+            obj.IsVisible = IsVisible;
+            obj.IsReadOnly = IsReadOnly;
+            obj.IsMandatory = IsMandatory;
+            obj.ClassName = ClassName;
+            obj.workflowId = workflowId[0];
+
+            var jsonStrings = JSON.stringify(obj);
+            var url = '/FieldRules/SaveFieldsNodes';
+            var data = MakeAjaxCall2("POST", false, url, JSON.stringify({ jsonString: jsonStrings }));
+            onSaveDetials(data);
+            getRulesNodes();
+            clearFooter();
+        }
+        else {
+            $('.footer-valid').each(function () {
+                if ($(this).val().length == 0 && this.disabled == false) {
+                    $(this).addClass("error");
+                } else {
+                    $(this).removeClass("error");
+                }
+            });
+            return false;
+        }
+
+    };
+
+    function clearFooter() {
+        $('.table-bordered').each(function () {
+            $('input[type=checkbox]').prop('checked', false);
+        });
+        $('.footer-valid').each(function () {
+            $(this).val('');
+        })
+    };
+
+    $("#txtSearchNodeRules").on("keyup", function () {
+        var self = this;
+        $("#gridRulesNodes").jqGrid('filterInput', self.value);
+        var tmp = $("#gridRulesNodes").jqGrid('filterInput', self.value);
+
+    });
+
+    $("#txtSearchFieldRules").on("keyup", function () {
+        var self = this;
+        $("#gridFiledRules").jqGrid('filterInput', self.value);
+
+    });
+
+    $("#txtSearchPartialViews").on("keyup", function () {
+        var self = this;
+        $("#grid").jqGrid('filterInput', self.value);
+
+    });
+
+    $("#btnCopyNodes").click(function () {
+        if ($("#txtFromNodeId").val() != "" && $("#txtToNodeId").val() != "") {
+            $("#txtFromNodeId,#txtToNodeId").removeClass("error");
+            var FromNode = $("#txtFromNodeId").val();
+            var ToNode = $("#txtToNodeId").val();
+            var url = "/FieldRules/CopyNodeRules?FromNode=" + FromNode + "&ToNode=" + ToNode;
+            var data = MakeAjaxCall2(requestPOST, false, url, '');
+            if (data != "0") {
+                $('.alert').hide();
+                Notify("Data Copied Sucessfully", null, null, "success");
+                $("#txtFromNodeId").val("");
+                $("#txtToNodeId").val("");
+            }
+            else {
+                $('.alert').hide();
+                Notify("data not saved", null, null, "warning");
+            }
+            getRulesNodes();
+        }
+        else {
+            $("#txtFromNodeId,#txtToNodeId").addClass("error");
+        }
+    });
+    
+  
+</script>

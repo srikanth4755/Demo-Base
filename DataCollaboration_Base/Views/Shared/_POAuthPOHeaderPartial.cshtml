@@ -1,0 +1,530 @@
+﻿@model DataCollaboration_Base.ViewModels.POAuthInfoVM
+
+@{
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DisabledHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @disabled = "disabled" };
+    }
+
+    object ReadonlyHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @readonly = "readonly" };
+    }
+
+    object DefaultHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "" };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+
+    object ShipAddressFieldHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @disabled = "disabled" };
+    }
+    object BillAddressFieldHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @disabled = "disabled" };
+    }
+    object PADescFieldHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className, @rows = 1, @disabled = "disabled" };
+    }
+
+    object searchFieldHtmlAttr(string className, bool IsReadOnly, string controlName)
+    {
+        if (IsReadOnly)
+        {
+            if (controlName == "button")
+                return new { @id = "btnSearch", @style = "padding: 4px 12px!important", @class = "btn btn-default " + className, @value = "Search", @disabled = "disabled", @type = "button" };
+            else if (controlName == "textbox")
+                return new { @class = "form-control input-sm DCformField " + className, @readonly = "readonly" };
+
+        }
+        else
+        {
+            if (controlName == "button")
+                return new { @id = "btnSearch", @style = "margin-top: 30px;padding: 4px 16px!important;", @class = "btn btn-default " + className, @type = "button" };
+            else if (controlName == "textbox")
+                return new { @class = "form-control input-sm DCformField " + className };
+        }
+        return null;
+    }
+
+    object vendorInfoHtmlAttr(string className, bool isDisabled, bool isChecked)
+    {
+        if (isDisabled)
+        {
+            if (isChecked)
+                return new { @checked = "checked", @class = "" + className, @disabled = "disabled" };
+            else
+                return new { @class = "DCformField " + className, @disabled = "disabled" };
+        }
+        else
+        {
+            if (isChecked)
+                return new { @checked = "checked", @class = "" + className };
+            else
+                return new { @class = "DCformField " + className };
+        }
+    }
+
+    object InvoiceHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            return new { @class = "form-control input-sm DCformField " + className, @readonly = "readonly", @maxlength = "10", @data_inputmask_alias = "mm/dd/yyyy", data_inputmask = "'yearrange': { 'minyear': '1917', 'maxyear': '2099' }", @data_val = "true", @data_val_required = "Required", @placeholder = "__/__/____" };
+        else
+            return new { @class = "form-control input-sm DCformField " + className, @maxlength = "10", @data_inputmask_alias = "mm/dd/yyyy", data_inputmask = "'yearrange': { 'minyear': '1917', 'maxyear': '2099' }", @data_val = "true", @data_val_required = "Required", @placeholder = "__/__/____" };
+    }
+
+    object vendorRemitToFieldHtmlAttr(string className, bool IsDisabled, string controlName)
+    {
+        if (IsDisabled)
+        {
+            if (controlName == "vendorName")
+                return new { @id = "IndexPivot_Vendor_Name", @class = "form-control input-sm DCformField " + className, @disabled = "disabled" };
+            else if (controlName == "vendorNumber" || controlName == "remitTo")
+                return new { @class = "form-control input-sm DCformField " + className, @disabled = "disabled" };
+        }
+        else
+        {
+            if (controlName == "vendorName")
+                return new { @id = "IndexPivot_Vendor_Name", @class = "form-control input-sm DCformField " + className };
+            else if (controlName == "vendorNumber" || controlName == "remitTo")
+                return new { @class = "form-control input-sm DCformField " + className };
+        }
+
+        return new { @class = "form-control input-sm DCformField " + className };
+    }
+
+    object vendorAddressFieldHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @disabled = "disabled" };
+    }
+
+}
+<div class="panel panel-primary" style="margin-left: -13px;margin-top: 20px;">
+    <div class="panel-heading">
+        PO Header
+        <div class="pull-right" style="font-weight: 600;">PO Number : @Html.Label("lblPONumber", @Model.IndexPivot.PONumber, new { id = "lblPONumber" })</div>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-4 col-sm-4">
+
+            @{
+                var companyField = _fieldRules.Where(m => m.FieldName == "CompCode" && m.IsVisible == true).FirstOrDefault();
+                if (companyField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(companyField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (companyField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.CompCode, new SelectList(Model.ActiveCompanies, "ActiveCompanyCode", "ActiveCompanyName"), "<select>", htmlAttributes: companyField.IsReadOnly ? DisabledHtmlAttr(companyField.ClassName) : DefaultHtmlAttr(companyField.ClassName))
+                        @Html.Hidden("hdn_IndexPivot_Co_Number", Model.IndexPivot.CompCode)
+                    </div>
+                }
+
+                var SiteIDField = _fieldRules.Where(m => m.FieldName == "SiteID" && m.IsVisible == true).FirstOrDefault();
+                if (SiteIDField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(SiteIDField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @if (SiteIDField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.SiteID, new SelectList(Model.Sites, "SiteID", "SiteDesc"), "<select>", htmlAttributes: SiteIDField.IsReadOnly ? DisabledHtmlAttr(SiteIDField.ClassName) : DefaultHtmlAttr(SiteIDField.ClassName))
+
+                    </div>
+                }
+
+                var departmentCodeField = _fieldRules.Where(m => m.FieldName == "DeptCode" && m.IsVisible == true).FirstOrDefault();
+                if (departmentCodeField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(departmentCodeField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (departmentCodeField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.DeptCode, new SelectList(Model.ActiveDepartments, "DeptCode", "DeptDescription"), "<select>", htmlAttributes: departmentCodeField.IsReadOnly ? DisabledHtmlAttr(departmentCodeField.ClassName) : DefaultHtmlAttr(departmentCodeField.ClassName))
+                        @Html.Hidden("hdn_isenbleIndexPivotDeptCode", departmentCodeField.IsReadOnly)
+                    </div>
+                }
+
+                var requestedByField = _fieldRules.Where(m => m.FieldName == "RequestedBy" && m.IsVisible == true).FirstOrDefault();
+                if (requestedByField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(requestedByField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextBoxFor(m => m.IndexPivot.RequestedBy, null, htmlAttributes: requestedByField.IsReadOnly ? ReadonlyHtmlAttr(requestedByField.ClassName) : DefaultHtmlAttr(requestedByField.ClassName))
+                    </div>
+                }
+
+                var issuedByField = _fieldRules.Where(m => m.FieldName == "IssuedBy" && m.IsVisible == true).FirstOrDefault();
+                if (issuedByField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(issuedByField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextBoxFor(m => m.IndexPivot.IssuedBy, null, htmlAttributes: issuedByField.IsReadOnly ? ReadonlyHtmlAttr(issuedByField.ClassName) : DefaultHtmlAttr(issuedByField.ClassName))
+                    </div>
+                }
+
+                var POTypeField = _fieldRules.Where(m => m.FieldName == "HeadUsr3" && m.IsVisible == true).FirstOrDefault();
+                if (POTypeField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(POTypeField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (POTypeField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.POType,
+                     new List<SelectListItem> { new SelectListItem { Text = "<select>", Value = "" },
+                                                                                  new SelectListItem { Text = "Standard", Value = "Standard" },
+                                                                                  new SelectListItem { Text = "Blanket", Value = "Blanket" },
+                                                                                new SelectListItem { Text = "Dossier Standard", Value = "DossierStandard" },
+                                                                                  new SelectListItem { Text = "Dossier External", Value = "DossierExternal" }
+
+                     },
+                     htmlAttributes: POTypeField.IsReadOnly ? DisabledHtmlAttr(POTypeField.ClassName) : DefaultHtmlAttr(POTypeField.ClassName))
+                    </div>
+                }
+
+                var pOOrginField = _fieldRules.Where(m => m.FieldName == "POOrgin" && m.IsVisible == true).FirstOrDefault();
+                if (pOOrginField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(pOOrginField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextBoxFor(m => m.IndexPivot.POOrigin, null, htmlAttributes: pOOrginField.IsReadOnly ? ReadonlyHtmlAttr(pOOrginField.ClassName) : DefaultHtmlAttr(pOOrginField.ClassName))
+                    </div>
+                }
+
+                var BillAddressField = _fieldRules.Where(m => m.FieldName == "BilltoAddress1" && m.IsVisible == true).FirstOrDefault();
+                if (BillAddressField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(BillAddressField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (BillAddressField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextArea("IndexPivot_BillAddress1", Model.IndexPivot.BilltoAddress1, htmlAttributes: BillAddressFieldHtmlAttr(BillAddressField.ClassName))
+
+                    </div>
+                }
+            }
+
+        </div>
+        <div class="col-md-4 col-sm-4">
+            @{
+                var vendorInfoField = _fieldRules.Where(m => m.FieldName == "VendorInfo" && m.IsVisible == true).FirstOrDefault();
+                var searchTextField = _fieldRules.Where(m => m.FieldName == "searchText" && m.IsVisible == true).FirstOrDefault();
+                if (searchTextField != null)
+                {
+                    <div class="form-group">
+
+                        @Html.Label(vendorInfoField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @{
+                            var checkboxNameField = _fieldRules.Where(m => m.FieldName == "checkboxName" && m.IsVisible == true).FirstOrDefault();
+                            var checkboxShortNameField = _fieldRules.Where(m => m.FieldName == "checkboxShortName" && m.IsVisible == true).FirstOrDefault();
+                            var checkboxNumberField = _fieldRules.Where(m => m.FieldName == "checkboxNumber" && m.IsVisible == true).FirstOrDefault();
+
+                            if (checkboxNameField != null)
+                            {
+                                <label>@Html.RadioButton("chkVendorInfo", "Name", htmlAttributes: checkboxNameField.IsReadOnly ? vendorInfoHtmlAttr(checkboxNameField.ClassName, true, false) : vendorInfoHtmlAttr(checkboxNameField.ClassName, false, false)) <b>@checkboxNameField.FieldLabelValue</b></label>
+                            }
+                            if (checkboxShortNameField != null)
+                            {
+                                <label> @Html.RadioButton("chkVendorInfo", "Shortname", htmlAttributes: checkboxShortNameField.IsReadOnly ? vendorInfoHtmlAttr(checkboxShortNameField.ClassName, true, true) : vendorInfoHtmlAttr(checkboxShortNameField.ClassName, false, true)) <b>@checkboxShortNameField.FieldLabelValue</b></label>
+                            }
+                            if (checkboxNumberField != null)
+                            {
+                                <label>@Html.RadioButton("chkVendorInfo", "Number", htmlAttributes: checkboxNumberField.IsReadOnly ? vendorInfoHtmlAttr(checkboxNumberField.ClassName, true, false) : vendorInfoHtmlAttr(checkboxNumberField.ClassName, false, false)) <b>@checkboxNumberField.FieldLabelValue</b></label>
+                            }
+                            <div class="input-group">
+                                @Html.TextBox("searchText", null, htmlAttributes: searchTextField.IsReadOnly ? searchFieldHtmlAttr(searchTextField.ClassName, true, "textbox") : searchFieldHtmlAttr(searchTextField.ClassName, false, "textbox"))
+                                <span class="input-group-addon" style="cursor: pointer;" id="btnSearch">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </span>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                var vendorNameField = _fieldRules.Where(m => m.FieldName == "VendorName" && m.IsVisible == true).FirstOrDefault();
+                if (vendorNameField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(vendorNameField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (vendorNameField.IsMandatory)
+                        {<span class="requiredField">*</span>}  @Html.DropDownListFor(m => m.IndexPivot.Vendor_Number, new SelectList(Model.Vendors, "Number", "Name"), "<select>", htmlAttributes: vendorNameField.IsReadOnly ? vendorRemitToFieldHtmlAttr(vendorNameField.ClassName, true, "vendorName") : vendorRemitToFieldHtmlAttr(vendorNameField.ClassName, false, "vendorName"))
+                    </div>
+                }
+
+                var vendorNumberField = _fieldRules.Where(m => m.FieldName == "VendorNumber" && m.IsVisible == true).FirstOrDefault();
+                if (vendorNumberField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(vendorNumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (vendorNumberField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.Vendor_Number, new SelectList(Model.Vendors, "Number", "Number"), "<select>", htmlAttributes: vendorNumberField.IsReadOnly ? vendorRemitToFieldHtmlAttr(vendorNumberField.ClassName, true, "vendorNumber") : vendorRemitToFieldHtmlAttr(vendorNumberField.ClassName, false, "vendorNumber"))
+                    </div>
+                }
+
+                var vendorContactName = _fieldRules.Where(m => m.FieldName == "POAuthVendorContactName" && m.IsVisible == true).FirstOrDefault();
+                if (vendorContactName != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(vendorContactName.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (vendorContactName.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.VendorContactName, null, htmlAttributes: vendorContactName.IsReadOnly ? ReadonlyHtmlAttr(vendorContactName.ClassName) : DefaultHtmlAttr(vendorContactName.ClassName))
+                    </div>
+                }
+
+                var vendorContactNumber = _fieldRules.Where(m => m.FieldName == "POAuthVendorContactNumber" && m.IsVisible == true).FirstOrDefault();
+                if (vendorContactName != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(vendorContactNumber.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (vendorContactNumber.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.VendorContactNumber, null, htmlAttributes: vendorContactNumber.IsReadOnly ? ReadonlyHtmlAttr(vendorContactNumber.ClassName) : DefaultHtmlAttr(vendorContactNumber.ClassName))
+                    </div>
+                }
+
+                var deliveryDateField = _fieldRules.Where(m => m.FieldName == "DeliveryDate" && m.IsVisible == true).FirstOrDefault();
+                if (deliveryDateField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(deliveryDateField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (deliveryDateField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.DeliveryDate, null, htmlAttributes: InvoiceHtmlAttr(deliveryDateField.IsReadOnly, deliveryDateField.ClassName))
+                    </div>
+                }
+
+                var remitToField = _fieldRules.Where(m => m.FieldName == "RemitToAddress" && m.IsVisible == true).FirstOrDefault();
+                if (remitToField != null)
+                {
+                    <div class="form-group" id="divRemitToAddress" style="display: none;">
+                        <label class="DCformLabel">Remit Address</label>
+                        @*@Html.DropDownListFor(m => m.IndexPivot.RemitToAddress, new SelectList(Model.RemitToLocations, "ListValue", "ListText"), "<select>", htmlAttributes: remitToField.IsReadOnly ? vendorRemitToFieldHtmlAttr(vendorNumberField.ClassName, true, "remitTo") : vendorRemitToFieldHtmlAttr(vendorNumberField.ClassName, false, "remitTo"))*@
+
+                    </div>
+                }
+                var vendorAddressField = _fieldRules.Where(m => m.FieldName == "VendorAddress" && m.IsVisible == true).FirstOrDefault();
+                if (vendorAddressField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(vendorAddressField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextArea("txtVendorAddress", Model.IndexPivot.VendorAddress, htmlAttributes: vendorAddressFieldHtmlAttr(vendorAddressField.ClassName))
+
+                    </div>
+                }
+            }
+
+        </div>
+        <div class="col-md-4 col-sm-4">
+
+            @{
+                var PaymentTermsField = _fieldRules.Where(m => m.FieldName == "POAuthPaymentTerms" && m.IsVisible == true).FirstOrDefault();
+                if (PaymentTermsField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(PaymentTermsField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (PaymentTermsField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.PaymentTerms, null, htmlAttributes: PaymentTermsField.IsReadOnly ? ReadonlyHtmlAttr(PaymentTermsField.ClassName) : DefaultHtmlAttr(PaymentTermsField.ClassName))
+                    </div>
+                }
+
+                var capexField = _fieldRules.Where(m => m.FieldName == "Capex" && m.IsVisible == true).FirstOrDefault();
+                if (capexField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(capexField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (capexField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.Capex,
+                 new List<SelectListItem> { new SelectListItem { Text = "<select>", Value = "" },
+                                                                              new SelectListItem { Text = "Non CAPEX", Value = "NonCAPEX" },
+                                                                              new SelectListItem { Text = "Budgeted CAPEX", Value = "BudgetedCAPEX" },
+                                                                              new SelectListItem { Text = "Unbudgeted CAPEX", Value = "UnbudgetedCAPEX" }
+                 },
+                 htmlAttributes: capexField.IsReadOnly ? DisabledHtmlAttr(capexField.ClassName) : DefaultHtmlAttr(capexField.ClassName))
+
+                    </div>
+                }
+
+                var projectViewButtonField = _fieldRules.Where(m => m.FieldName == "ViewProjectNumberButton").FirstOrDefault();
+                var paNumeberField = _fieldRules.Where(m => m.FieldName == "ProjectNumber" && m.IsVisible == true).FirstOrDefault();
+                if (paNumeberField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(paNumeberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (paNumeberField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+
+
+                        @if (projectViewButtonField.IsVisible)
+                        {
+                            <div id="btnView" class="btn btn-info btn-xs">View</div>
+                        }
+
+                        @Html.TextBoxFor(m => m.IndexPivot.PANumber, null, htmlAttributes: paNumeberField.IsReadOnly ? ReadonlyHtmlAttr(paNumeberField.ClassName) : DefaultHtmlAttr(paNumeberField.ClassName))
+                        @Html.Hidden("hdn_IndexPivot_PANumber", Model.IndexPivot.PANumber)
+                        @Html.Hidden("hdn_isenbleIndexPivotPANumber", paNumeberField.IsReadOnly)
+                    </div>
+                }
+
+                var paDescField = _fieldRules.Where(m => m.FieldName == "PADescription" && m.IsVisible == true).FirstOrDefault();
+                if (paDescField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(paDescField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextArea("IndexPivot_PADescription", Model.IndexPivot.PADescription, htmlAttributes: PADescFieldHtmlAttr(paDescField.ClassName))
+
+                    </div>
+                }
+
+                var viewSpendCategoryBudgetButton = _fieldRules.Where(m => m.FieldName == "ViewSpendCategoryBudgetButton").FirstOrDefault();
+                var spendCategoryField = _fieldRules.Where(m => m.FieldName == "SpendCategory" && m.IsVisible == true).FirstOrDefault();
+                if (spendCategoryField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(spendCategoryField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @*@if (spendCategoryField.IsMandatory){<span class="requiredField">*</span>}*@
+                        <span id="spnSpendCategory" class="requiredField">*</span>
+                        @if (viewSpendCategoryBudgetButton.IsVisible)
+                        {
+                            <div id="btnViewSpendCatBudget" class="btn btn-info btn-xs">View</div>
+                        }
+                        @Html.DropDownListFor(m => m.IndexPivot.SpendCategory,
+                       new SelectList(Model.ActiveSpendCategories, "SpendCategoryName", "SpendCategoryName"), "<select>",
+                     htmlAttributes: spendCategoryField.IsReadOnly ? DisabledHtmlAttr(spendCategoryField.ClassName) : DefaultHtmlAttr(spendCategoryField.ClassName))
+                        @Html.Hidden("hdn_isenbleSpendCategory", spendCategoryField.IsReadOnly)
+                    </div>
+                }
+
+                var unitNumberField = _fieldRules.Where(m => m.FieldName == "UnitNumber" && m.IsVisible == true).FirstOrDefault();
+                if (unitNumberField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(unitNumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                        @Html.TextBoxFor(m => m.IndexPivot.Unit_Number, null, htmlAttributes: unitNumberField.IsReadOnly ? ReadonlyHtmlAttr(unitNumberField.ClassName) : DefaultHtmlAttr(unitNumberField.ClassName))
+                    </div>
+                }
+
+                var ShipAddressField = _fieldRules.Where(m => m.FieldName == "ShiptoAddress1" && m.IsVisible == true).FirstOrDefault();
+                if (ShipAddressField != null)
+                {
+                    <div class="form-group">
+                        @Html.Label(ShipAddressField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (ShipAddressField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextArea("IndexPivot_ShiptoAddress", Model.IndexPivot.ShiptoAddress, htmlAttributes: ShipAddressFieldHtmlAttr(ShipAddressField.ClassName))
+
+                    </div>
+                }
+            }
+
+        </div>
+
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg" style="width: 80%;">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #428bca;border-color: #428bca;margin: -1px;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Project Budget Details</h4>
+                    </div>
+                    <div class="modal-body" style="overflow: auto;">
+                        <table id="tblPADetails" class="table table-bordered">
+                            <tr>
+                                <th>Project #</th>
+                                <th>Budget Amount</th>
+                                <th>CurrentSpend</th>
+                                <th>Year</th>
+                                <th>Multi Year</th>
+                                <th>Jan</th>
+                                <th>Feb</th>
+                                <th>Mar</th>
+                                <th>Apr</th>
+                                <th>May</th>
+                                <th>Jun</th>
+                                <th>Jul</th>
+                                <th>Aug</th>
+                                <th>Sep</th>
+                                <th>Oct</th>
+                                <th>Nov</th>
+                                <th>Dec</th>
+                                <th>Total Spend</th>
+                            </tr>
+                        </table>
+                        <span id="spnModal" style="font-size: 18px;"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="PopupSpendCategoryBudget" role="dialog">
+            <div class="modal-dialog modal-lg" style="width: 85%;">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #39b3d7;border-color: #269abc;margin: -1px;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Spend Category Budget Details</h4>
+                    </div>
+
+                    <div class="modal-body" style="overflow: auto;">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="email">Spend Category :</label>
+                                <div class="col-sm-2" style=" text-align: right;    margin-left: -8%;">
+                                    <span class="allowCurrecyFormat" id="spnSpendCategoryName"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="email">Current PO Value :</label>
+                                <div class="col-sm-2" style=" text-align: right;    margin-left: -8%;">
+                                    <span class="allowCurrecyFormat" id="spnCurrntPO"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="email1">Total Pending POs :</label>
+                                <div class="col-sm-2" style=" text-align: right; margin-left: -8%;">
+                                    <span class="allowCurrecyFormat" id="spnTotalPendingPOs">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="tblSpendCategoryBudget" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="300px" style="min-width: 106px;">Spend Type</th>
+                                    <th>YTD</th>
+                                    <th>Jan</th>
+                                    <th>Feb</th>
+                                    <th>Mar</th>
+                                    <th>Apr</th>
+                                    <th>May</th>
+                                    <th>Jun</th>
+                                    <th>Jul</th>
+                                    <th>Aug</th>
+                                    <th>Sep</th>
+                                    <th>Oct</th>
+                                    <th>Nov</th>
+                                    <th>Dec</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <span id="spnModalSpendCategory" style="font-size: 18px;"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

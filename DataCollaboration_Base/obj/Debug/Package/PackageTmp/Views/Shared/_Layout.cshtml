@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+
+    @Styles.Render("~/Content/css")
+    @*@Styles.Render("~/Scripts/JQGrid/ui.jqgrid-bootstrap.css")
+        @Scripts.Render("~/Scripts/JQGrid/grid.locale-en.js")
+        @Scripts.Render("~/Scripts/JQGrid/jquery.jqGrid.js")*@
+
+</head>
+<body>
+
+
+    @RenderBody()
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+
+
+
+
+     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/commonScript")
+   
+
+    @*@Scripts.Render("~/Scripts/" + ViewData["TenantCode"].ToString() + ".js")*@
+    @*<script src="@Url.Content("~/Scripts/"+ViewData["TenantName"].ToString()+"")"></script>*@
+</body>
+</html>

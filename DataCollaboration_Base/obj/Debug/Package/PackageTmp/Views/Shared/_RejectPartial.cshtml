@@ -1,0 +1,88 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "Reject" && m.IsApplicable == true).FirstOrDefault();
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+    var formControlCss = "form-control input-sm DCformField ";
+    var disabledAttribute = "";
+    var readOnlyAttribute = "";
+    var rowsAttribute = "";
+    var placeholderAttribute = "";
+
+    object defaultHtmlAttribute = new { @class = formControlCss };
+
+
+    //object GetHtmlAttributes()
+    //{
+    //    defaultHtmlAttribute = @disabled = "disabled";
+
+    //    return defaultHtmlAttribute;
+    //}
+
+    object DisabledHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @disabled = "disabled" };
+    }
+
+    object DefaultHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "" };
+    }
+
+    object ReasonForRejectionHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @placeholder = "Enter your reason here...", @readonly = "readonly" };
+        else
+            return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @placeholder = "Enter your reason here..." };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+}
+
+@Html.Partial("_HeaderCommonLabels", Model)
+
+<div class="row" style="max-width: 100%;padding-left: 15px;">
+    <div class="col-sm-12" style="padding-right: 0px;">
+        <div class="panel panel-primary" style="margin-left: -13px;margin-top: 5px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">@partialViewLableName.HeaderLabel</h3>
+            </div>
+            <div class="panel-body">
+                @{
+                    var rejectToField = _fieldRules.Where(m => m.FieldName == "RejectTo" && m.IsVisible == true).FirstOrDefault();
+                    if (rejectToField != null)
+                    {
+                        <div class="col-md-6 col-sm-6">
+
+                            <div class="form-group">
+                                @Html.Label(rejectToField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (rejectToField.IsMandatory == true)
+                                {<span class="requiredField">*</span>}
+                                @Html.DropDownList("ddlRejectTo", new List<SelectListItem> { new SelectListItem { Text = "<select>", Value = "<select>" } }, htmlAttributes: rejectToField.IsReadOnly ? DisabledHtmlAttr(rejectToField.ClassName) : DefaultHtmlAttr(rejectToField.ClassName))
+                            </div>
+
+                        </div>
+                    }
+                }
+                @{
+                    var reasonForRejectionField = _fieldRules.Where(m => m.FieldName == "ReasonForRejection" && m.IsVisible == true).FirstOrDefault();
+                    if (reasonForRejectionField != null)
+                    {
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                @Html.Label(reasonForRejectionField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (reasonForRejectionField.IsMandatory == true)
+                                {<span class="requiredField">*</span>}
+                                @Html.TextArea("txtReasonRejection", htmlAttributes: reasonForRejectionField.IsReadOnly ? ReasonForRejectionHtmlAttr(true, reasonForRejectionField.ClassName) : ReasonForRejectionHtmlAttr(false, reasonForRejectionField.ClassName))
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

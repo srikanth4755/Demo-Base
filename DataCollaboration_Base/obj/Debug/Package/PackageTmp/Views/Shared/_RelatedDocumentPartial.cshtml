@@ -1,0 +1,124 @@
+﻿@*@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM*@
+@model DataCollaboration_Base.ViewModels.RelatedDoumentModel
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "RelatedDocuments" && m.IsApplicable == true).FirstOrDefault();
+    var documentId = Model.DocumentId.ToString();
+    var _scanDate = DateTime.Now.ToString("dd-MMM-yyyy");
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object ReadOnlyHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @readonly = "readonly" };
+    }
+
+    object DisabledHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @disabled = "disabled" };
+    }
+
+    object DefaultHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "" };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+
+}
+
+<div class="panel panel-primary" style="margin-left: 16px;margin-right: 30px;">
+    <div class="panel-heading">
+        <div class="col-sm-12" style="height:20px;padding:0px;">
+            <div class="col-sm-6 col-xs-10" style="padding:0px;">
+                <h3 class="panel-title">@partialViewLableName.HeaderLabel</h3>
+            </div>
+            <div class="col-sm-6 col-xs-2" style="padding:0px;" align="right">
+                <button id="btnCloseRelatedDoc"type="button" class="close closebtn" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+        </div>
+
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="col-md-6 col-sm-6">
+                    @{
+                        var uploadFolderField = _fieldRules.Where(m => m.FieldName == "UploadFolder" && m.IsVisible == true).FirstOrDefault();
+                        if (uploadFolderField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(uploadFolderField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                                @Html.DropDownListFor(x => x.Uploadfolder, new List<SelectListItem> {new SelectListItem { Text = "Related Documents", Value = "RelatedDocuments" }},
+                     htmlAttributes: uploadFolderField.IsReadOnly ? DisabledHtmlAttr(uploadFolderField.ClassName) : DefaultHtmlAttr(uploadFolderField.ClassName))
+                            </div>
+                        }
+                        var parentDocIdField = _fieldRules.Where(m => m.FieldName == "ParentDocumentID" && m.IsVisible == true).FirstOrDefault();
+                        if (parentDocIdField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(parentDocIdField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                                @Html.TextBoxFor(x => x.ParentDocumentID, htmlAttributes: ReadOnlyHtmlAttr(parentDocIdField.ClassName))
+
+                            </div>
+                        }
+                        var selectFileField = _fieldRules.Where(m => m.FieldName == "SelectFile" && m.IsVisible == true).FirstOrDefault();
+                        if (selectFileField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(selectFileField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (selectFileField.IsMandatory)
+                                {<span class="requiredField">*</span>}
+                                <input type="file" name="fileToUpload" id="fileToUpload" class="form-control input-sm DCformField file" accept=".pdf">
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    @{
+                        var documentNameField = _fieldRules.Where(m => m.FieldName == "DocumentName" && m.IsVisible == true).FirstOrDefault();
+                        if (documentNameField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(documentNameField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (documentNameField.IsMandatory)
+                                {<span class="requiredField">*</span>}
+                                @Html.TextBoxFor(x=>x.DocumentName, htmlAttributes: DefaultHtmlAttr(documentNameField.ClassName))
+                            </div>
+                        }
+                        var ddlDocumentNameField = _fieldRules.Where(m => m.FieldName == "DocumentNameforDropdown" && m.IsVisible == true).FirstOrDefault();
+                        if (ddlDocumentNameField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(ddlDocumentNameField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (ddlDocumentNameField.IsMandatory)
+                                {<span class="requiredField">*</span>}
+                                <select id="DocumentName" class="form-control">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        }
+                        var scanDateField = _fieldRules.Where(m => m.FieldName == "ScanDate" && m.IsVisible == true).FirstOrDefault();
+                        if (scanDateField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(scanDateField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                                @Html.TextBoxFor(x => x.ScanDate, htmlAttributes: ReadOnlyHtmlAttr(scanDateField.ClassName))
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="pull-left" style="padding-left:15px">
+            <button type="button" id="btnUploadFile" class="btn btn-success" style="width: 80px!important;"> Upload</button>
+            <button type="button" id="btnUploadCancel" class="btn btn-danger" style="width: 80px!important;"> Clear</button>
+        </div>
+    </div>
+
+
+</div>
+
+
+

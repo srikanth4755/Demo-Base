@@ -1,0 +1,122 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "PODetails" && m.IsApplicable == true).FirstOrDefault();
+    var _dCConfigurations = (List<DCCommon.DCConfiguration>)ViewData["DCConfigurations"];
+
+    var objAccountAssignmentDefaultCongiguration = _dCConfigurations.Where(x => x.ConfigName == "AccountAssignmentDefault1").FirstOrDefault();
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DefaultButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-primary " + className, @type = "button", @disabled = "disabled", @style = "width:100%" };
+        else
+            return new { @class = "btn btn-primary " + className, @type = "button", @style = "width:100%" };
+    }
+
+    object TextboxHtmlAttr(string className, bool isReadOnly)
+    {
+        if (isReadOnly)
+            return new { @class = "form-control DCformField " + className, @disabled = "disabled" };
+        else
+            return new { @class = "form-control DCformField " + className };
+    }
+
+    object TextboxDecimalHtmlAttr(string className, bool isReadOnly)
+    {
+        if (isReadOnly)
+            return new { @class = "form-control DCformField " + className, @disabled = "disabled" };
+        else
+            return new { @class = "form-control DCformField " + className, @data_decimal = "2" };
+    }
+
+    object CheckboxHtmlAttr(string className, bool disabled)
+    {
+        if (disabled)
+            return new { @class = " " + className, @disabled = "disabled" };
+        else
+            return new { @class = " " + className };
+    }
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+    object CheckBoxHtmlAttr(bool disabled)
+    {
+        if (disabled)
+            return new { @disabled = "disabled" };
+        else
+            return new { };
+    }
+}
+
+@Html.Partial("_HeaderCommonLabels", Model)
+
+@{
+    var smartListButtonField = _fieldRules.Where(m => m.FieldName == "PODetailSmartListButton" && m.IsVisible == true).FirstOrDefault();
+    var PODetailsReLoadField = _fieldRules.Where(m => m.FieldName == "PODetailsReLoad" && m.IsVisible == true).FirstOrDefault();
+    var toleranceField = _fieldRules.Where(m => m.FieldName == "Tolerance" && m.IsVisible == true).FirstOrDefault();
+<div class="row" style="padding-bottom:10px;">
+    @if (PODetailsReLoadField != null)
+    {
+        <div class="btn-group pull-left" style="margin-right: 17px;" role="tablist">
+            @Html.TextBox("btnPODetailsReLoad", PODetailsReLoadField.FieldLabelValue, htmlAttributes: PODetailsReLoadField.IsReadOnly ? DefaultButtonHtmlAttr(PODetailsReLoadField.ClassName, true) : DefaultButtonHtmlAttr(PODetailsReLoadField.ClassName, false))
+        </div>
+    }
+   
+    <div style="float: right; margin-right: 17px;">
+        @if (toleranceField != null)
+        {
+        <div style="position: absolute;margin-top: 4px;margin-left: -12px">
+            @Html.CheckBox("TagDocumentHeader_UserXDB6", Model.TagDocumentHeader.UserXDB6.ToLower() == "yes" ? true : false, htmlAttributes: toleranceField.IsReadOnly ? CheckBoxHtmlAttr(toleranceField.IsReadOnly) : CheckBoxHtmlAttr(toleranceField.IsReadOnly))
+        </div>       
+        @Html.Label(toleranceField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+        }
+    @if (smartListButtonField != null)
+    {
+
+        <div class="btn-group pull-right" style="margin-right: 17px;" role="tablist">
+            @Html.TextBox("btnPODetailSmartList", smartListButtonField.FieldLabelValue, htmlAttributes: smartListButtonField.IsReadOnly ? DefaultButtonHtmlAttr(smartListButtonField.ClassName, true) : DefaultButtonHtmlAttr(smartListButtonField.ClassName, false))
+        </div>
+
+    }
+    </div>
+</div>
+}
+
+@*<div class="row" style="padding-bottom:10px;">
+        @{
+            var smartListButtonField = _fieldRules.Where(m => m.FieldName == "PODetailSmartListButton" && m.IsVisible == true).FirstOrDefault();
+            if (smartListButtonField != null)
+            {
+                <div class="btn-group pull-right" style="margin-right: 17px;" role="tablist">
+                    @Html.TextBox("btnPODetailSmartList", smartListButtonField.FieldLabelValue, htmlAttributes: smartListButtonField.IsReadOnly ? DefaultButtonHtmlAttr(smartListButtonField.ClassName, true) : DefaultButtonHtmlAttr(smartListButtonField.ClassName, false))
+                </div>
+
+            }
+
+        }
+    </div>*@
+
+
+<div class="row">
+    <div class="col-sm-12">
+        @Html.Partial("_APInvoiceDetailPartial", Model)
+    </div>
+</div>
+
+<div id="smartlistPODetailPopup" style="display: none; max-height:500px!important; width:800px!important;top:25px !important;">
+    <table class="table table-bordered" id="SmartListHeaderGrid"></table>
+    <br />
+    <table class="table table-hover table-bordered" id="SmartListDetailGrid"></table>
+    <div class="pull-left" style="padding-top:10px;">
+        <span id="lblSmartlistPODetailAmountErr" class="warningMsg" style="display:inline-block;color:#C00000;width:100%;"></span>
+    </div>
+    <div class="pull-right" style="padding-top:10px;padding-bottom:20px;">
+        <button type="button" id="btnPODetailOk" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+        <button type="button" id="btnPODetailCancel" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+    </div>
+</div>

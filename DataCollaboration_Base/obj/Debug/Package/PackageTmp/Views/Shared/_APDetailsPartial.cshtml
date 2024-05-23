@@ -1,0 +1,225 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "APDetails" && m.IsApplicable == true).FirstOrDefault();
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DefaultButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-primary " + className, @type = "button", @disabled = "disabled" };
+        else
+            return new { @class = "btn btn-primary " + className, @type = "button" };
+    }
+
+    object ExpenceAccountHtmlAttr(string className, bool IsReadOnly)
+    {
+        if (IsReadOnly)
+            return new { @class = "form-control expenseacctnum ui-autocomplete-input DCformField " + className, @id = "txtGLComboBox", @placeholder = "Enter Expense Account Number", @autocomplete = "off", @readonly = "readonly" };
+
+        else
+
+            return new { @class = "form-control expenseacctnum ui-autocomplete-input DCformField " + className, @id = "txtGLComboBox", @placeholder = "Enter Expense Account Number", @autocomplete = "off" };
+
+    }
+
+    object ExpenceAccountDescHtmlAttr(string className)
+    {
+        return new { @disabled = "disabled", @class = "form-control DCformField" };
+    }
+
+    object ExpencedAmountHtmlAttr(string className, bool IsReadOnly)
+    {
+        if (IsReadOnly)
+            return new { @maxlength = "10", @class = " form-control allowdecimalsOnly DCformField " + className, @placeholder = "Enter Amount", @autocomplete = "off", @readonly = "readonly", @data_decimals = "3" };
+        else
+            return new { @maxlength = "10", @class = " form-control allowdecimalsOnly DCformField " + className, @placeholder = "Enter Amount", @autocomplete = "off" };
+    }
+
+}
+
+@Html.Partial("_HeaderCommonLabels", Model)
+
+@{
+    var smartListButtonField = _fieldRules.Where(m => m.FieldName == "SmartListButton" && m.IsVisible == true).FirstOrDefault();
+    if (smartListButtonField != null)
+    {
+        <div class="row" style="margin-bottom: -12px;">
+            
+            <div class="btn-group pull-right" style="margin-right: 17px;" role="tablist">
+                @Html.TextBox("btnSmartList", "SmartList", htmlAttributes: smartListButtonField.IsReadOnly ? DefaultButtonHtmlAttr(smartListButtonField.ClassName, true) : DefaultButtonHtmlAttr(smartListButtonField.ClassName, false))
+            </div>
+        </div>
+    }
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-primary" style="margin-left: -13px;margin-top: 20px;overflow: auto;">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left">@partialViewLableName.HeaderLabel</h3>
+                <div class="pull-right">
+                    Unallocated balance @Html.Label("UnAllocatedBalance", Model.UnAllocatedBalance.ToString(), new { @id = "UnAllocatedBalance", @style = "background-color:Orange;font-weight: normal;" })
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <div class="list-group-item" style="border:none!important;">
+                        <div id="divRptr" class="col-sm-12" aria-disabled="true">
+                            <div class="dataTables_wrapper" id="ExpenseGrid_wrapper">
+                                <table class="table table-hover table-bordered" id="ExpenseGrid" style="width: 999px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none;visibility:hidden;"></th>
+                                            <th>ExpenseAccountNumber</th>
+                                            <th>ExpenseAccountDescription</th>
+                                            <th>ExpensedAmount</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+
+                                            var gridRowExpenseAccountNumber = _fieldRules.Where(m => m.FieldName == "GridRowExpenseAccountNumber" && m.IsVisible == true).FirstOrDefault();
+                                            var gridRowExpenseAccountDescription = _fieldRules.Where(m => m.FieldName == "GridRowExpenseAccountDescription" && m.IsVisible == true).FirstOrDefault();
+                                            var gridRowExpensedAmount = _fieldRules.Where(m => m.FieldName == "GridRowExpensedAmount" && m.IsVisible == true).FirstOrDefault();
+                                            var gridRowDeleteButton = _fieldRules.Where(m => m.FieldName == "GridRowDeleteButton" && m.IsVisible == true).FirstOrDefault();
+
+                                            var grdClassExpAccNo = gridRowExpenseAccountNumber != null ? gridRowExpenseAccountNumber.IsReadOnly ? "GridEvents-Off " + gridRowExpenseAccountNumber.ClassName : gridRowExpenseAccountNumber.ClassName : "GridEvents-Off";
+                                            var grdClassExpAccDesc = gridRowExpenseAccountDescription != null ? gridRowExpenseAccountDescription.IsReadOnly ? "GridEvents-Off " + gridRowExpenseAccountDescription.ClassName : gridRowExpenseAccountDescription.ClassName : "GridEvents-Off";
+                                            var grdClassExpAmt = gridRowExpensedAmount != null ? gridRowExpensedAmount.IsReadOnly ? "GridEvents-Off " + gridRowExpensedAmount.ClassName : gridRowExpensedAmount.ClassName : "GridEvents-Off";
+                                            var grdClassDelete = gridRowDeleteButton != null ? gridRowDeleteButton.IsReadOnly ? "GridEvents-Off " + gridRowDeleteButton.ClassName : gridRowDeleteButton.ClassName : "GridEvents-Off";
+
+                                            string td1 = "td1"; string td2 = "td2"; string td3 = "td3"; string td4 = "td4";
+                                            //To make unique Id
+                                            int i = 0;
+                                            foreach (var item in Model.TagDocumentDetail.ToList())
+                                            {
+                                                <tr id=@item.TagDocumentDetailsID class="odd">
+                                                    <td style="display:none;visibility:hidden;">
+                                                        @Html.HiddenFor(o => o.TagDocumentDetail[i].RowStatus)
+                                                        @Html.HiddenFor(o => o.TagDocumentDetail[i].DocumentID)
+                                                        @Html.HiddenFor(o => o.TagDocumentDetail[i].TagDocumentDetailsID)
+                                                    </td>
+                                                    <td id=@td1@item.TagDocumentDetailsID class="@grdClassExpAccNo">
+                                                        @Html.LabelFor(o => o.TagDocumentDetail[i].ExpenseAccountNumber, Model.TagDocumentDetail[i].ExpenseAccountNumber, new { @class = "expenseacctnum ui-autocomplete-input", @style = "font-weight: normal;" })
+                                                    </td>
+                                                    <td id=@td2@item.TagDocumentDetailsID class="@grdClassExpAccDesc">
+                                                        @Html.LabelFor(o => o.TagDocumentDetail[i].ExpenseAccountDescription, Model.TagDocumentDetail[i].ExpenseAccountDescription, new { @disabled = "disabled", @class = "disabled", @style = "font-weight: normal;" })
+                                                    </td>
+                                                    <td id=@td3@item.TagDocumentDetailsID class="@grdClassExpAmt">@Html.LabelFor(o => o.TagDocumentDetail[i].ExpensedAmount, Model.TagDocumentDetail[i].ExpensedAmount.ToString(), new { @maxlength = "10", @class = "", @style = "font-weight: normal;" })</td>
+                                                    <td id=@td4@item.TagDocumentDetailsID class="text-center @grdClassDelete">
+                                                        <a id="btnDelete" class="btn btn-sm btn-danger button delbtn">
+                                                            <i aria-hidden="true" class="glyphicon glyphicon-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                i++;
+                                            }
+
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        @{
+                                            var expenceAccountField = _fieldRules.Where(m => m.FieldName == "ExpenseAccountNumber" && m.IsVisible == true).FirstOrDefault();
+                                            var accountDescField = _fieldRules.Where(m => m.FieldName == "ExpenseAccountDescription" && m.IsVisible == true).FirstOrDefault();
+                                            var expensedAmountField = _fieldRules.Where(m => m.FieldName == "ExpensedAmount" && m.IsVisible == true).FirstOrDefault();
+                                            var gridAddButtonField = _fieldRules.Where(m => m.FieldName == "GridAddButton" && m.IsVisible == true).FirstOrDefault();
+                                            if (expenceAccountField != null || accountDescField != null || expensedAmountField != null || gridAddButtonField != null)
+                                            {
+                                                <tr>
+                                                    <td style="display:none;visibility:hidden;">
+                                                        @Html.Hidden("HdnRowStatus", "Add")
+                                                        @Html.Hidden("HdnDocumentID", Model.IndexPivot.DocumentID)
+                                                    </td>
+                                                    <td rowspan="1" colspan="1">
+                                                        @{
+                                                            if (expenceAccountField != null)
+                                                            {
+                                                                @Html.TextBox("txtGLComboBox", "", htmlAttributes: expenceAccountField.IsReadOnly ? ExpenceAccountHtmlAttr(expenceAccountField.ClassName, true) : ExpenceAccountHtmlAttr(expenceAccountField.ClassName, false))
+                                                                <span class="form-control-static" style="color:Red;display:none;">*</span>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td rowspan="1" colspan="1">
+                                                        @{
+                                                            if (accountDescField != null)
+                                                            {
+                                                                @Html.TextBox("txtAccountDesc", "", htmlAttributes: ExpenceAccountDescHtmlAttr(accountDescField.ClassName))
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td rowspan="1" colspan="1">
+                                                        @{
+                                                            if (expensedAmountField != null)
+                                                            {
+                                                                @Html.TextBox("txtExpensedamount", "", htmlAttributes: ExpencedAmountHtmlAttr(expensedAmountField.ClassName, expenceAccountField.IsReadOnly))
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td rowspan="1" colspan="1">
+                                                        @{
+                                                            if (gridAddButtonField != null)
+                                                            {
+                                                                @Html.TextBox("btnAdd", "Add", htmlAttributes: gridAddButtonField.IsReadOnly ? DefaultButtonHtmlAttr(gridAddButtonField.ClassName, true) : DefaultButtonHtmlAttr(gridAddButtonField.ClassName, false));
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <span id="lblMessage" class="warningMsg" style="display:inline-block;color:#C00000;width:100%;">@Model.Message</span>
+                <span id="lblErrMsgDetails" class="warningMsg" style="display:inline-block;color:#C00000;width:100%;"></span>
+                <span id="lblSavesuccess" class="warningMsg" style="display:inline-block;color:Green;width:100%;"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="smartlistPopup" style="display: none; max-height:500px!important; width:800px!important;">
+    <table class="table table-hover table-bordered" id="SmartListGrid">
+        <thead>
+            <tr>
+                <th style="width: 409px; cursor: default!important;" class="sorting_asc" rowspan="1" colspan="1">
+                    ExpenseAccountNumber
+                </th>
+                <th style="width: 410px; cursor: default!important;" class="sorting" rowspan="1" colspan="1">
+                    ExpenseAccountDescription
+                </th>
+                <th style="width: 143px; cursor: default!important;" class="sorting" rowspan="1" colspan="1">
+                    ExpensedAmount
+                </th>
+                <th style="width: 43px; cursor: default!important;" class="sorting" rowspan="1" colspan="1"></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        @*<tfoot>
+                <tr>
+                    <td rowspan="1" colspan="1"></td>
+                    <td rowspan="1" colspan="1"></td>
+                    <td rowspan="1" colspan="1"></td>
+                    <td rowspan="1" colspan="1"></td>
+                </tr>
+            </tfoot>*@
+    </table>
+    <hr />
+    <div class="pull-left">
+        <span id="lblSmartlistAmountErr" class="warningMsg" style="display:inline-block;color:#C00000;width:100%;"></span>
+    </div>
+    <div class="pull-right">
+        <button type="button" id="btnOk" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+        <button type="button" id="btnCancel" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+    </div>
+</div>
+
+
+

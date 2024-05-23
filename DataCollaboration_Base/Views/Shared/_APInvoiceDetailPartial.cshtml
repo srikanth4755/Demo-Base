@@ -1,0 +1,240 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "PODetails" && m.IsApplicable == true).FirstOrDefault();
+    var _dCConfigurations = (List<DCCommon.DCConfiguration>)ViewData["DCConfigurations"];
+
+    var objAccountAssignmentDefaultCongiguration = _dCConfigurations.Where(x => x.ConfigName == "AccountAssignmentDefault1").FirstOrDefault();
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+    var GLListButtonField = _fieldRules.Where(m => m.FieldName == "UploadExcelButton" && m.IsVisible == true).FirstOrDefault();
+
+
+    object DefaultButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-primary gridlinecolerror " + className, @type = "button", @disabled = "disabled", @style = "width:100%" };
+        else
+            return new { @class = "btn btn-primary gridlinecolerror " + className, @type = "button", @style = "width:100%" };
+    }
+
+    object TextboxHtmlAttr(string className, bool isReadOnly)
+    {
+        if (isReadOnly)
+            return new { @class = "form-control DCformField gridlinecolerror " + className, @disabled = "disabled" };
+        else
+            return new { @class = "form-control DCformField gridlinecolerror " + className };
+    }
+
+    object TextboxDecimalHtmlAttr(string className, bool isReadOnly)
+    {
+        if (isReadOnly)
+            return new { @class = "form-control DCformField gridlinecolerror " + className, @disabled = "disabled" };
+        else
+            return new { @class = "form-control DCformField gridlinecolerror " + className, @data_decimal = "2" };
+    }
+
+    object CheckboxHtmlAttr(string className, bool disabled)
+    {
+        if (disabled)
+            return new { @class = " gridlinecolerror " + className, @disabled = "disabled" };
+        else
+            return new { @class = " gridlinecolerror " + className };
+    }
+}
+
+<style>
+    .jqgrid-multiline-cell {
+        max-height: 2.8em;
+        overflow-x: hidden;
+    }
+
+    .ui-jqgrid .ui-jqgrid-bdiv {
+        overflow: inherit
+    }
+
+    .ui-state-highlight {
+        border: none !important;
+        background: none !important;
+    }
+
+    input.ui-pg-input.form-control, select.ui-pg-selbox.form-control {
+        border: 1px solid #ccc;
+    }
+
+    .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 7px;
+    }
+
+    /*.ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+                      overflow: hidden;
+                      white-space: pre;
+                      padding-right: 7px;
+                  }*/
+
+    .cal_total {
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    .cal_total_grid {
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    .PL5 {
+        padding-left: 5px;
+    }
+
+    .PR5 {
+        padding-left: 5px;
+    }
+
+    .ui-jqgrid .ui-jqgrid-view {
+        overflow: hidden;
+    }
+
+    .ui-jqgrid .ui-jqgrid-bdiv {
+        overflow: hidden;
+    }
+
+    /*.ui-jqgrid .ui-jqgrid-htable thead th div {
+                      overflow: initial;
+                  }*/
+
+    .ui-jqgrid .ui-jqgrid-htable .ui-th-div {
+        height: auto;
+        white-space: initial;
+    }
+
+    .ui-th-column ui-th-ltr {
+        white-space: normal;
+    }
+
+    .ui-jqgrid .ui-jqgrid-htable .ui-th-div {
+        font-size: 12px;
+    }
+
+    .ui-jqgrid .ui-jqgrid-btable {
+        font-size: 12px;
+    }
+
+    .ui-jqgrid .inline-edit-cell {
+        font-size: 12px !important;
+    }
+
+    .ui-jqgrid .ui-jqgrid-btable tbody tr.jqgrow td {
+        white-space: normal;
+    }
+
+    /*#jqGrid_ExpenseAccountNumber {
+                  min-width:200px !important;
+                  }*/
+
+    .ui-jqgrid .ui-jqgrid-pager .ui-pager-table, .ui-jqgrid .ui-jqgrid-toppager .ui-pager-table {
+        table-layout: auto;
+    }
+
+
+    .table caption + thead tr:first-child th, .table colgroup + thead tr:first-child th, .table thead:first-child tr:first-child th, .table caption + thead tr:first-child td, .table colgroup + thead tr:first-child td, .table thead:first-child tr:first-child td {
+        border-top: 0;
+        /* background-color: #ffffff; */
+        /*color: #ffffff;
+        background-color: #428bca;*/
+    }
+
+    /*.dataTables_wrapper {
+                      overflow-x: auto;
+                  }*/
+
+
+    .header-msg {
+        margin: 10px 18px 0px 18px;
+        max-width: 100% !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-primary" style="margin-left: -13px;margin-top: 0px;overflow: hidden;">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left">@partialViewLableName.HeaderLabel</h3>
+                @{
+                    var unAllocatedBalanceField = _fieldRules.Where(m => m.FieldName == "PODetailUnAllocatedBalance" && m.IsVisible == true).FirstOrDefault();
+                    if (unAllocatedBalanceField != null)
+                    {
+                        <div class="pull-right">
+                            Unallocated balance @Html.Label("UnAllocatedBalance", Model.UnAllocatedBalance.ToString(), new { @class = (unAllocatedBalanceField.ClassName != null || unAllocatedBalanceField.ClassName != "") ? "" + unAllocatedBalanceField.ClassName : " ", @id = "UnAllocatedBalance", @style = "background-color:Orange;font-weight: normal;" })
+                            <input type="hidden" id="hdnShouldbeZero" value="0" />
+                        </div>
+                    }
+                }
+            </div>
+            <div class="panel-body" style="margin-left: -33px!important;margin-right: -23px!important;">
+                <div class="list-group">
+                    <div class="list-group-item" style="border:none!important;">
+                        <div id="divRptr" class="col-md-12" aria-disabled="true">
+                            <div class="row">
+                                <div class="col-md-8 col-xs-7" style="padding-left: 51px;">
+                                    @if (GLListButtonField != null)
+                                    {
+                                        <div id="divLoader" class="btn-group hideLoader" style="margin-left: -15px;" role="tablist">
+                                            <div class="loader"></div>
+                                        </div>
+                                        <div class="btn group pull-left" style="margin-left:-25px;" role="tablist">
+                                            @Html.TextBox("btnGLFileUpload", "GL", new { type = "file", accept = ".xlsx" })
+                                        </div>
+                                        <div class="btn-group pull-left" style="margin-left: -15px;margin-right: 20px;" role="tablist">
+                                            @Html.TextBox("btnGLFileUploads", GLListButtonField.FieldLabelValue, htmlAttributes: GLListButtonField.IsReadOnly ? DefaultButtonHtmlAttr(GLListButtonField.ClassName, true) : DefaultButtonHtmlAttr(GLListButtonField.ClassName, false))
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-4 col-xs-5">
+                                    <div class="form-inline form-group" style="text-align: right;">
+                                        <label>@*Search :*@ </label>
+                                        @*<input type="text" class="form-control" name="search" id="txtSearch" style="width: 200px;"/>*@
+
+                                        @Html.TextBox("search", null, new { @id = "txtSearch", @style = "width: 201px;", @class = "form-control", @Placeholder = "Search...." })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dataTables_wrapper" id="ExpenseGridPO_wrapper" style="overflow: auto;margin-left: 20px;">
+                                <table id="jqGrid"></table>
+                                <div id="jqGridPager">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg" style="overflow-y: initial !important;">
+            <div class="modal-content">
+                <div class="modal-header alert-danger header-msg">
+                    <button type="button" class="close" data-dismiss="modal"><b>x</b></button>
+                    <h4 class="modal-title" style="color:red">Error! </h4>
+                    <b>
+                        <p id="exceluploadMsg"> </p>
+                    </b>
+                </div>
+                <div class="modal-body" style="overflow-y: auto;max-height: 300px;">
+                    <p id="showData"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

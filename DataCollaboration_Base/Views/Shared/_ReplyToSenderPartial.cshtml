@@ -1,0 +1,32 @@
+﻿@{
+
+    object DefaultHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField" };
+    }
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+    object TextAreaHtmlAttr()
+    {
+        return new { @class = "form-control input-sm DCformField col-sm-12" , @rows = 3, @placeholder = "Enter your Reply here...",@style = "max-width:100%" };
+    }
+}
+<div class="row" style="max-width: 100%;padding-left: 15px;height:190px;">
+    <div class="col-sm-12" style="padding-right: 0px;padding-left: 0px;">
+        <div class="panel panel-primary" style="margin-left: -13px;margin-top: 5px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">Reply Note</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        @Html.Label("Reply Note", htmlAttributes: LabelHtmlAttr())
+                        @Html.TextArea("txtReplyNote", htmlAttributes: TextAreaHtmlAttr())
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

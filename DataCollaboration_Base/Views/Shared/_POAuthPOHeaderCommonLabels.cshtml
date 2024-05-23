@@ -1,0 +1,105 @@
+﻿@model DataCollaboration_Base.ViewModels.POAuthInfoVM
+
+@{
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DefaultLableHtmlAttr(string id, string className)
+    {
+        return new { @id = id, @class = "DCformField " + className, @style = "font-weight: normal;" };
+    }
+
+    object InvoiceDateLableHtmlAttr(string id, string className)
+    {
+        return new { @id = id, @class = "DCformField placeholder " + className, @maxlength = "10", @style = "font-weight: normal;" };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+}
+<div class="row">
+    <div class="col-sm-12" style="margin-top:10px;">
+        <div class="col-sm-6 col-xs-12">
+            @{
+
+                var companyField = _fieldRules.Where(m => m.FieldName == "DetailCompany" && m.IsVisible == true).FirstOrDefault();
+                if (companyField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(companyField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-8 col-xs-6">@Html.LabelFor(m => m.IndexPivot.CompCode, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentCompanyNo", companyField.ClassName))</div>
+                        @Html.HiddenFor(m => m.DocumentID, new { @id = "hdnDocumentID" })
+                    </div>
+                }
+                var siteIDField = _fieldRules.Where(m => m.FieldName == "DetailSiteID" && m.IsVisible == true).FirstOrDefault();
+                if (siteIDField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(siteIDField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-4 col-xs-6">@Html.LabelFor(m => m.IndexPivot.SiteID, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentSiteID", siteIDField.ClassName)) </div>
+                    </div>
+                }
+                var vendorField = _fieldRules.Where(m => m.FieldName == "DetailVendor" && m.IsVisible == true).FirstOrDefault();
+                if (vendorField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(vendorField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-8 col-xs-6">@Html.LabelFor(m => m.IndexPivot.Vendor_Name, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentVendor", vendorField.ClassName))</div>
+                    </div>
+                }
+                var vendorNumberField = _fieldRules.Where(m => m.FieldName == "DetailVendorNuber" && m.IsVisible == true).FirstOrDefault();
+                if (vendorField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(vendorNumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-8 col-xs-6">@Html.LabelFor(m => m.IndexPivot.Vendor_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentVendorNumber", vendorNumberField.ClassName))</div>
+                    </div>
+                }
+
+            }
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            @{
+                var pONumberField = _fieldRules.Where(m => m.FieldName == "DetailPONumber" && m.IsVisible == true).FirstOrDefault();
+                if (pONumberField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(pONumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-4 col-xs-6">@Html.LabelFor(m => m.IndexPivot.PO_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentPONumber", pONumberField.ClassName)) </div>
+                    </div>
+                }
+                var pANumberField = _fieldRules.Where(m => m.FieldName == "DetailPANumber" && m.IsVisible == true).FirstOrDefault();
+                if (pANumberField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(pANumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-4 col-xs-6">@Html.LabelFor(m => m.IndexPivot.PANumber, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentPANumber", pANumberField.ClassName)) </div>
+                    </div>
+                }
+                var paymentTermsField = _fieldRules.Where(m => m.FieldName == "DetailPaymentTerms" && m.IsVisible == true).FirstOrDefault();
+                if (paymentTermsField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(paymentTermsField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-4 col-xs-6">@Html.LabelFor(m => m.IndexPivot.PaymentTerms, htmlAttributes: InvoiceDateLableHtmlAttr("lblAccAssgnmentPaymentTerms", paymentTermsField.ClassName))</div>
+                    </div>
+                }
+                var vendorAddressField = _fieldRules.Where(m => m.FieldName == "DetailVendorAddress" && m.IsVisible == true).FirstOrDefault();
+                if (vendorAddressField != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6">@Html.Label(vendorAddressField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                        <div class="col-sm-4 col-xs-6">@Html.LabelFor(m => m.IndexPivot.VendorAddress1, htmlAttributes: InvoiceDateLableHtmlAttr("lblAccAssgnmentVendorAddress", vendorAddressField.ClassName))</div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

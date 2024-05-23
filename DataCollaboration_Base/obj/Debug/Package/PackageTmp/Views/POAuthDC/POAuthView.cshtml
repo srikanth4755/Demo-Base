@@ -1,0 +1,165 @@
+﻿
+@model DataCollaboration_Base.ViewModels.POAuthInfoVM
+@{
+    ViewBag.Title = "POAuthView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+    var _validationConditions = (List<DCCommon.ValidationConditions>)ViewData["ValidationConditions"];
+    var _dCConfigurations = (List<DCCommon.DCConfiguration>)ViewData["DCConfigurations"];
+
+    if(Model.IndexPivot != null)
+    {
+        DataCollaboration_Base.ViewModels.HeaderMenuData headerMenuData = new DataCollaboration_Base.ViewModels.HeaderMenuData()
+        {
+            DocumentID = Model.IndexPivot.DocumentID,
+            NodeText = Model.NodeText,
+            RowStatus = ""/*Model.TagDocumentHeader != null ? Model.TagDocumentHeader.RowStatus : "Add"*/
+        };
+    }
+
+
+    if (Model.IndexPivot != null)
+    {
+        DataCollaboration_Base.ViewModels.RelatedDoumentModel relatedDoument = new DataCollaboration_Base.ViewModels.RelatedDoumentModel()
+        {
+            DocumentId = Convert.ToString(Model.IndexPivot.DocumentID),
+            DocumentName = "",
+            ScanDate = DateTime.Now.ToString("dd-MMM-yyyy"),
+            ParentDocumentID = Convert.ToString(Model.IndexPivot.DocumentID)
+        };
+    }
+}
+<script>
+    jsonFieldRules =  @Html.Raw(Json.Encode(_fieldRules));
+    jsonValidationConditions = @Html.Raw(Json.Encode(_validationConditions));
+    jsonDCConfigurations= @Html.Raw(Json.Encode(_dCConfigurations));
+    workFlowId = @Model.WorkFlowID;
+    nodeId = @Model.NodeID;
+    userDetailsID = '@Model.CurrentUserDetailsID';
+    inboxLink = '@Model.InboxLink';
+    poAuthGridData = @Html.Raw(Json.Encode(Model.TagdocumentPOAuthDetail));
+    //JSON.stringify(jsonObj)
+</script>
+<div id="notifications"></div>
+<div class="container">
+    <input type="hidden" id="hdnInboxlink" value="@Model.InboxLink" />
+    @Html.Hidden("HdnDocumentID", Model.IndexPivot.DocumentID)
+    <div class="col-sm-12">
+        @*@Html.Partial("_HeadingPartial", @headerMenuData)*@
+    </div>
+    <div class="tab-content">
+        <div id="HeaderGeneral" class="col-sm-12 tab-pane active">
+            @{
+                if (Model.IsForward)
+                {
+                    <div class="col-sm-12" style="padding-right: 0px;">
+                        @Html.Partial("_ReplyToSenderPartial")
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "General" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12">
+                        @Html.Partial("_POAuthPOHeaderPartial", Model)
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "Vendors" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12">
+                        @*@Html.Partial("_POAuthVendorsPartial", Model)*@
+                        @Html.Partial("_POAuthDetailsPartial", Model)
+                    </div>
+                }
+            }
+        </div>
+
+        @if (!Model.IsForward)
+        {
+            if (_partialViews.Where(m => m.ViewName == "Forward" && m.IsApplicable == true).FirstOrDefault() != null)
+            {
+                <div id="Forward" class="col-sm-12 tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.Partial("_POAuthForwardPartial", Model);
+                        </div>
+                    </div>
+                </div>
+            }
+            if (_partialViews.Where(m => m.ViewName == "Reject" && m.IsApplicable == true).FirstOrDefault() != null)
+            {
+                <div id="Reject" class="col-sm-12 tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.Partial("_POAuthRejectPartial", Model)
+                        </div>
+                    </div>
+                </div>
+
+            }
+        }
+
+        @{
+            <div id="RelatedDocuments" class="col-sm-12 tab-pane">
+                <div class="row">
+                    <div class="col-sm-12" style="padding:20px 0px;">
+                        @*@Html.Partial("_RelatedDocumentPartial", relatedDoument)*@
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+</div>
+
+@if (!Model.IsForward)
+{
+    <!--poauth popup-->
+    <div id="ApprovepanelPopup" class="panel panel-primary" style="margin-left: 2px;margin-top:0px;margin-right:18px;font-family:Helvetica !important">
+        <div class="panel-body">
+            <div class="col-md-6 col-sm-6">
+                @Html.Label("Approve", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                <div class="form-group">
+                    <select id="ddlApprove" class="form-control input-sm DCformField" style="font-family:Helvetica !important">
+                        <option>Select</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                @Html.Label("Notes", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                <div class="form-group">
+                    @Html.TextArea("txtNote", "", new { @class = "form-control input-sm DCformField", @style = "font-family:Helvetica !important" })
+                </div>
+
+            </div>
+            <div class="pull-right">
+                <button type="button" id="btnSendToApprover" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+                <button type="button" id="btnClose" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!--poauth popup-->
+}
+
+<script type="text/javascript">
+
+    var JsonHeaderData = @Html.Raw(Json.Encode(Model.IndexPivot));
+    var JsonDetailsData = @Html.Raw(Json.Encode(Model.TagdocumentPOAuthDetail));
+    var fieldRules =@Html.Raw(Json.Encode(ViewData["FieldRules"]));
+
+</script>
+
+@Scripts.Render("~/Scripts/DCScripts/DateFormat.js")
+@Scripts.Render("~/Scripts/DCScripts/Utility.js")
+@Scripts.Render("~/Scripts/DCScripts/poauth.js")
+@Scripts.Render("~/Scripts/DCScripts/poauthDetails.js")
+@Scripts.Render("~/Scripts/DCScripts/relatedDocuments.js")
+
+
+
+
+

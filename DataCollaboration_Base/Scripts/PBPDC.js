@@ -1,0 +1,5 @@
+﻿$(function () {
+
+    var example = 'abc';
+
+});

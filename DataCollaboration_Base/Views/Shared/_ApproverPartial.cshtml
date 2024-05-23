@@ -1,0 +1,101 @@
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        debugger;
+        var obj = {
+            ApproverList: [
+                { ApproverDesc: "User 1", UserdetailsID: "1", NextNodeID: "200" },
+                { ApproverDesc: "User 2", UserdetailsID: "2", NextNodeID: "300" },
+                { ApproverDesc: "User 3", UserdetailsID: "3", NextNodeID: "400" },
+                { ApproverDesc: "User 4", UserdetailsID: "4", NextNodeID: "500" }
+            ]
+        }
+        $.each(obj.ApproverList, function (key, value) {
+            $("#ddlApprove").append($('<option></option>').val(value.UserdetailsID).html(value.ApproverDesc));
+        });
+
+        $('#ddlApprove').change(function () {
+            if ($(this).val() > 0)
+            {
+                var i= $(this).val()-1
+                alert("ApproverDesc :" + obj.ApproverList[i].ApproverDesc + "\n" + "UserdetailsID :" + obj.ApproverList[i].UserdetailsID + "\n" + "NextNodeID :" + obj.ApproverList[i].NextNodeID)
+            }
+        });
+
+        $("#ApprovepanelPopup").dialog({
+            autoOpen: false,
+            modal: true,
+            title: "Please select an Approver",
+            width: "80%",
+            maxWidth: "668px"
+        });
+        $('#btnOk').click(function () {
+            $('#ddlApprove1').empty();
+            $('#Notes1').empty();
+            $.each(obj.ApproverList, function (key, value) {
+                $("#ddlApprove1").append($('<option></option>').val(value.UserdetailsID).html(value.ApproverDesc));
+            });
+            debugger;
+            $('#ddlApprove1').change(function () {
+                if ($(this).val() > 0) {
+                    var i = $(this).val() - 1
+                    alert("ApproverDesc :" + obj.ApproverList[i].ApproverDesc + "\n" + "UserdetailsID :" + obj.ApproverList[i].UserdetailsID + "\n" + "NextNodeID :" + obj.ApproverList[i].NextNodeID)
+                }
+            });
+            debugger;
+            $('#ApprovepanelPopup').html();
+            $('#ApprovepanelPopup').dialog('open');
+        });
+
+        $('#btnClose').click(function () {
+            $('#ApprovepanelPopup').dialog('close');
+        });
+        $('#btnSaveDet').click(function () {
+
+            if ($('#ddlApprove1').val() == 0 || $('#Notes1').val()=='') {
+                alert("Check Fields")
+            }
+            else {
+                $('#ApprovepanelPopup').dialog('close');
+            }
+            
+        })
+        
+    })
+
+</script>
+<style>
+    body{
+         font-family: Helvetica !important;
+    }
+   .btn,.ui-widget-header {
+  font-family: Helvetica !important;
+  font-size:16px !important;
+}
+</style>
+
+<div id="ApprovepanelPopup" class="panel panel-primary" style="margin-left: 2px;margin-top:0px;margin-right:18px;font-family:Helvetica !important">
+    <div class="panel-body">
+        <div class="col-md-6 col-sm-6">
+            @Html.Label("Approve", htmlAttributes: new { @class = "DCformLabel" , @style = "font-family:Helvetica !important" })
+            <div class="form-group">
+                <select id="ddlApprove1" class="form-control input-sm DCformField" style = "font-family:Helvetica !important">
+                    <option>Select</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            @Html.Label("Notes", htmlAttributes: new { @class = "DCformLabel" , @style = "font-family:Helvetica !important" })
+            <div class="form-group">
+                @Html.TextArea("Notes1", "", new { @class = "form-control input-sm DCformField" ,@style= "font-family:Helvetica !important"})
+            </div>
+
+        </div>
+        <div class="pull-right">
+            <button type="button" id="btnSaveDet" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+            <button type="button" id="btnClose" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+        </div>
+    </div>
+</div>
+
+

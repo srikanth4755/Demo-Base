@@ -1,0 +1,148 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var partialViewLableName = _partialViews.Where(m => m.ViewName == "Invoice" && m.IsApplicable == true).FirstOrDefault();
+
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DecimalValidateHtmlAttr(bool readOnly, string className)
+    {
+        if(readOnly)
+            return new { @class = "form-control input-sm allowdecimalsOnly DCformField " + className + "", @readonly = "readonly" };
+        else
+            return new { @class = "form-control input-sm allowdecimalsOnly DCformField " + className + "" };
+    }
+
+    object ReadOnlyHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @readonly = "readonly" };
+    }
+
+    object DisabledHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "", @disabled = "disabled" };
+    }
+
+    object DefaultHtmlAttr(string className)
+    {
+        return new { @class = "form-control input-sm DCformField " + className + "" };
+    }
+
+    object InvoiceHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            //return new { @class = "form-control input-sm DCformField " + className, @readonly = "readonly", @maxlength = "10" };
+            return new { @class = "form-control input-sm DCformField " + className, @readonly = "readonly", @maxlength = "10", @data_inputmask_alias = "mm/dd/yyyy", data_inputmask = "'yearrange': { 'minyear': '1917', 'maxyear': '2099' }", @data_val = "true", @data_val_required = "Required", @placeholder = "__/__/____" };
+        else
+            //return new { @class = "form-control input-sm DCformField " + className, @maxlength = "10" };
+            return new { @class = "form-control input-sm DCformField " + className, @maxlength = "10", @data_inputmask_alias = "mm/dd/yyyy", data_inputmask = "'yearrange': { 'minyear': '1917', 'maxyear': '2099' }", @data_val = "true", @data_val_required = "Required", @placeholder = "__/__/____" };
+    }
+    object InvoiceNumberHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            return new { @class = "form-control input-sm DCformField " + className + "", @maxlength = 20, @disabled = "disabled" };
+        else
+            return new { @class = "form-control input-sm DCformField " + className + "", @maxlength = 20 };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+
+    object CheckBoxHtmlAttr(bool disabled)
+    {
+        if (disabled)
+            return new { @disabled = "disabled" };
+        else
+            return new { };
+    }
+}
+<div class="panel panel-primary" style="/* margin: 19px; */margin-left: -13px;margin-top: 0px;">
+    <div class="panel-heading">
+        <h3 class="panel-title">@partialViewLableName.HeaderLabel</h3>
+    </div>
+    <div class="panel-body">
+
+        <div class="col-md-12 col-sm-12">
+            @{
+                var invoiceNumberField = _fieldRules.Where(m => m.FieldName == "InvoiceNumber" && m.IsVisible == true).FirstOrDefault();
+                if (invoiceNumberField != null)
+                {
+                    <div class="form-group @invoiceNumberField.FormGroupClass">
+                        @Html.Label(invoiceNumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (invoiceNumberField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @*@Html.TextBoxFor(m => m.IndexPivot.Invoice_Number, null, htmlAttributes: invoiceNumberField.IsReadOnly ? ReadOnlyHtmlAttr(invoiceNumberField.ClassName) : DefaultHtmlAttr(invoiceNumberField.ClassName))*@
+                        @Html.TextBoxFor(m => m.IndexPivot.Invoice_Number, null, htmlAttributes: InvoiceNumberHtmlAttr(invoiceNumberField.IsReadOnly, invoiceNumberField.ClassName))
+                    </div>
+                }
+                var invoiceDateField = _fieldRules.Where(m => m.FieldName == "InvoiceDate" && m.IsVisible == true).FirstOrDefault();
+                if (invoiceDateField != null)
+                {
+                    <div class="form-group @invoiceDateField.FormGroupClass">
+                        @Html.Label(invoiceDateField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (invoiceDateField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.Invoice_Date, null, htmlAttributes: InvoiceHtmlAttr(invoiceDateField.IsReadOnly, invoiceDateField.ClassName))
+                    </div>
+                }
+
+                var invoiceAmountField = _fieldRules.Where(m => m.FieldName == "InvoiceAmount" && m.IsVisible == true).FirstOrDefault();
+                if (invoiceAmountField != null)
+                {
+                    <div class="form-group  @invoiceAmountField.FormGroupClass">
+                        @Html.Label(invoiceAmountField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (invoiceAmountField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.Invoice_Amount, null, htmlAttributes: DecimalValidateHtmlAttr(invoiceAmountField.IsReadOnly, invoiceAmountField.ClassName))
+                    </div>
+                }
+            }
+        </div>
+        <div class="col-md-12 col-sm-12">
+            @{
+
+                @*var dueDateField = _fieldRules.Where(m => m.FieldName == "DueDate" && m.IsVisible == true).FirstOrDefault();
+                if (dueDateField != null)
+                {
+                    <div class="form-group @dueDateField.FormGroupClass" id="duedateDiv" style="padding:0px">
+                        @Html.Label(dueDateField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (dueDateField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.TextBoxFor(m => m.IndexPivot.Due_Date, null, htmlAttributes: InvoiceHtmlAttr(dueDateField.IsReadOnly, dueDateField.ClassName))
+                    </div>
+                }*@
+
+                var salesTax = _fieldRules.Where(m => m.FieldName == "HeadUsr4" && m.IsVisible == true).FirstOrDefault();
+
+                <div class="form-group">
+                    @if (salesTax != null)
+                    {
+                        @Html.CheckBox("TagDocumentHeader_HeadUsr4", Model.TagDocumentHeader.HeadUsr4.ToLower() == "no" ? false : true, htmlAttributes: salesTax.IsReadOnly ? CheckBoxHtmlAttr(salesTax.IsReadOnly) : CheckBoxHtmlAttr(salesTax.IsReadOnly))
+                        @Html.Label(salesTax.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                    }
+                </div>
+
+                var accountingPeriodField = _fieldRules.Where(m => m.FieldName == "AccountingDate" && m.IsVisible == true).FirstOrDefault();
+                if (accountingPeriodField != null)
+                {
+                    <div class="form-group @accountingPeriodField.FormGroupClass">
+                        @Html.Label(accountingPeriodField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (accountingPeriodField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.TagDocumentHeader.AccountingDate, new SelectList(Model.AccountingPeriodMonths, "Value", "Text"),
+                                           htmlAttributes: accountingPeriodField.IsReadOnly ? DisabledHtmlAttr(accountingPeriodField.ClassName) : DefaultHtmlAttr(accountingPeriodField.ClassName))
+                    </div>
+                }
+                var separatePaymentField = _fieldRules.Where(m => m.FieldName == "SeparatePayment" && m.IsVisible == true).FirstOrDefault();
+                if (separatePaymentField != null)
+                {
+                    <div class="form-group @separatePaymentField.FormGroupClass">
+                        @Html.Label(separatePaymentField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (separatePaymentField.IsMandatory)
+                        {<span class="requiredField">*</span>}
+                        @Html.DropDownListFor(m => m.IndexPivot.SeparatePayment, new SelectList(Model.SeparatePayments, "Value", "Text"),
+                                           htmlAttributes: separatePaymentField.IsReadOnly ? DisabledHtmlAttr(separatePaymentField.ClassName) : DefaultHtmlAttr(separatePaymentField.ClassName))
+                    </div>
+                }               
+            }
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,127 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+
+@{
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DefaultLableHtmlAttr(string id, string className)
+    {
+        return new { @id = id, @class = "DCformField " + className, @style = "font-weight: normal;" };
+    }
+
+    object InvoiceDateLableHtmlAttr(string id, string className)
+    {
+        return new { @id = id, @class = "DCformField placeholder " + className, @maxlength = "10", @style = "font-weight: normal;" };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel", @style = "padding-left:0px;" };
+    }
+}
+<style>
+    .fg_mb0 {
+        margin-bottom: 0px;
+    }
+
+    label {
+        margin-bottom: 1px;
+    }
+
+    .DCformField, .DCformField select, .DCformField input, .DCformField text-area {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+    }
+</style>
+
+<div class="row" style="margin-top:10px;margin-left: -44px;margin-bottom: 5px;">
+    <div class="col-sm-12 col-xs-12">
+        <div class="col-sm-6 col-xs-12" style="padding-right: 2px;">
+            <fieldset class="col-sm-12 col-xs-12" style=" background-color: white;height: 245px;">
+                <legend>Header Details</legend>
+                <div class="col-sm-6 col-xs-12">
+                    @{
+                        var companyField = _fieldRules.Where(m => m.FieldName == "DetailCompany" && m.IsVisible == true).FirstOrDefault();
+                        if (companyField != null)
+                        {
+                            <div class="form-group">
+                                <label>@Html.Label(companyField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</label>
+                                @Html.LabelFor(m => m.IndexPivot.Co_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentCompanyNo", companyField.ClassName))
+                                @Html.HiddenFor(m => m.DocumentID, new { @id = "hdnDocumentID" })
+                            </div>
+                        }
+                        var siteIDField = _fieldRules.Where(m => m.FieldName == "DetailSiteID" && m.IsVisible == true).FirstOrDefault();
+                        if (siteIDField != null)
+                        {
+                            var mm = Model.IndexPivot.SiteID.ToString();
+                            <div class="row">
+                                <div class="pull-left" style="padding-right: 10%;">@Html.Label(siteIDField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())</div>
+                                <div class="pull-left">@Html.LabelFor(m => m.IndexPivot.SiteID, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentSiteID", siteIDField.ClassName))</div>
+                                @Html.HiddenFor(m => m.DocumentID, new { @id = "hdnDocumentID" })
+                            </div>
+                        }
+
+                        var vendorField = _fieldRules.Where(m => m.FieldName == "DetailVendor" && m.IsVisible == true).FirstOrDefault();
+                        if (vendorField != null)
+                        {
+                            <div class="form-group fg_mb0">
+                                @Html.Label(vendorField.FieldLabelValue, htmlAttributes: LabelHtmlAttr())
+                            </div>
+                            <div class="form-group fg_mb0">
+                                @Html.LabelFor(m => m.IndexPivot.Vendor_Name, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentVendor", vendorField.ClassName))
+                            </div>
+                            <div class="form-group fg_mb0">
+                                @Html.LabelFor(m => m.IndexPivot.Vendor_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentVendorNumber", vendorField.ClassName))
+                            </div>
+                            <div class="form-group fg_mb0">
+                                @Html.LabelFor(m => m.RemitAddrText, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentVendorAddress", vendorField.ClassName))
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-sm-6 col-xs-6">
+                    @{
+                        var pONumberField = _fieldRules.Where(m => m.FieldName == "DetailPONumber" && m.IsVisible == true).FirstOrDefault();
+                        if (pONumberField != null)
+                        {
+                            <div class="form-group fg_mb0">
+                                <label class="fg_label" style="width: 105px;">@Html.Label(pONumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) </label>  <b> : </b>
+                                @Html.LabelFor(m => m.IndexPivot.PO_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentPONumber", pONumberField.ClassName))
+                            </div>
+                        }
+                        var invoiceNumberField = _fieldRules.Where(m => m.FieldName == "DetailInvoiceNumber" && m.IsVisible == true).FirstOrDefault();
+                        if (invoiceNumberField != null)
+                        {
+                            <div class="form-group fg_mb0">
+                                <label class="fg_label" style="width: 105px;">@Html.Label(invoiceNumberField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) </label>  <b> : </b>
+                                @Html.LabelFor(m => m.IndexPivot.Invoice_Number, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentInvoiceNo", invoiceNumberField.ClassName))
+                            </div>
+                        }
+                        var invoiceDateField = _fieldRules.Where(m => m.FieldName == "DetailInvoiceDate" && m.IsVisible == true).FirstOrDefault();
+                        if (invoiceDateField != null)
+                        {
+                            <div class="form-group fg_mb0">
+                                <label class="fg_label" style="width: 105px;">@Html.Label(invoiceDateField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) </label>  <b> : </b>
+                                @Html.LabelFor(m => m.IndexPivot.Invoice_Date, htmlAttributes: InvoiceDateLableHtmlAttr("lblAccAssgnmentInvoiceDate", invoiceDateField.ClassName))
+                            </div>
+                        }
+                        var invoiceAmountField = _fieldRules.Where(m => m.FieldName == "DetailInvoiceAmount" && m.IsVisible == true).FirstOrDefault();
+                        if (invoiceAmountField != null)
+                        {
+                            <div class="form-group fg_mb0">
+                                <label class="fg_label" style="width: 105px;">@Html.Label(invoiceAmountField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) </label>  <b> : </b>
+                                @Html.LabelFor(m => m.IndexPivot.Invoice_Amount, htmlAttributes: DefaultLableHtmlAttr("lblAccAssgnmentInvoiceAmount", invoiceAmountField.ClassName))
+                            </div>
+                        }
+                    }
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-sm-6 col-xs-12" style="padding: 0px;padding-right: 2px; padding-left: 15px;">
+            @*padding-left: 4px; padding-right: 0px;*@
+            <fieldset class="col-sm-12 col-xs-12" style=" background-color: white; height: 244px;">
+                <legend>PO Charges</legend>
+                @Html.Partial("_POCharges")
+            </fieldset>
+        </div>
+    </div>
+</div>

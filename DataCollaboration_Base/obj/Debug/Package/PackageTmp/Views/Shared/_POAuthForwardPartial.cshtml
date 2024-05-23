@@ -1,0 +1,86 @@
+﻿@model DataCollaboration_Base.ViewModels.POAuthInfoVM
+
+@{
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object AddNotesHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @placeholder = "Enter your Notes here...", @readonly = "readonly" };
+        else
+            return new { @class = "form-control input-sm DCformField " + className, @rows = 4, @placeholder = "Enter your Notes here..." };
+    }
+
+    object ForwardToHtmlAttr(bool readOnly, string className)
+    {
+        if (readOnly)
+            return new { @autocomplete = "off", @class = "form-control input-sm DCformField " + className, @placeholder = "Type Last Name/First Name/UserID", @readonly = "readonly" };
+        else
+            return new { @autocomplete = "off", @class = "form-control input-sm DCformField " + className, @placeholder = "Type Last Name/First Name/UserID" };
+    }
+
+    object AddButtonHtmlAttr(bool disabled, string className)
+    {
+        if (disabled)
+            return new { @class = "btn btn-primary DCformField " + className, @type = "button", @disabled = "disabled" };
+        else
+            return new { @class = "btn btn-primary DCformField " + className, @type = "button" };
+    }
+
+    object LabelHtmlAttr()
+    {
+        return new { @class = "DCformLabel" };
+    }
+}
+
+@Html.Partial("_POAuthPOHeaderCommonLabels", Model)
+
+<div class="row" style="max-width: 100%;padding-left: 15px;">
+    <div class="col-sm-12">
+        <div class="panel panel-primary" style="margin-left: -13px;margin-top: 5px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">Forward</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-6 col-sm-6">
+                    @{
+                        var forwardToField = _fieldRules.Where(m => m.FieldName == "ForwardTo" && m.IsVisible == true).FirstOrDefault();
+                        if (forwardToField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(forwardToField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (forwardToField.IsMandatory)
+                                {<span class="requiredField">*</span>}
+                                @Html.TextBox("txtForwardTo", null,
+                                htmlAttributes: forwardToField.IsReadOnly ? ForwardToHtmlAttr(true, forwardToField.ClassName) : ForwardToHtmlAttr(false, forwardToField.ClassName))
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    @{
+                        var addNotesField = _fieldRules.Where(m => m.FieldName == "AddNotes" && m.IsVisible == true).FirstOrDefault();
+                        if (addNotesField != null)
+                        {
+                            <div class="form-group">
+                                @Html.Label(addNotesField.FieldLabelValue, htmlAttributes: LabelHtmlAttr()) @if (addNotesField.IsMandatory)
+                                {<span class="requiredField">*</span>}
+                                @Html.TextArea("txtAddNotes",
+                                     htmlAttributes: addNotesField.IsReadOnly? AddNotesHtmlAttr(true, addNotesField.ClassName): AddNotesHtmlAttr(false, addNotesField.ClassName))
+                            </div>
+                        }
+                        var addButtonField = _fieldRules.Where(m => m.FieldName == "AddButton" && m.IsVisible == true).FirstOrDefault();
+                        if (addButtonField != null)
+                        {
+                            <div class="form-group">
+                                @Html.TextBox("btnAddNotes", addButtonField.FieldLabelValue, htmlAttributes: addButtonField.IsReadOnly ? AddButtonHtmlAttr(true, addButtonField.ClassName) : AddButtonHtmlAttr(false, addButtonField.ClassName))
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

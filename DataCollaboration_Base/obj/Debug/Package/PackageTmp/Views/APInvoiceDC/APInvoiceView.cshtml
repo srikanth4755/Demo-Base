@@ -1,0 +1,240 @@
+﻿@model DataCollaboration_Base.ViewModels.APInvoiceInfoVM
+@{
+    ViewBag.Title = "InvoiceData";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var _partialViews = (List<DCCommon.PartialViewRules>)ViewData["PartialViewRules"];
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+    var _validationConditions = (List<DCCommon.ValidationConditions>)ViewData["ValidationConditions"];
+    var _dCConfigurations = (List<DCCommon.DCConfiguration>)ViewData["DCConfigurations"];
+    var _headerParams = (DCCommon.HeaderParams)ViewData["HeaderParams"];
+
+    DataCollaboration_Base.ViewModels.HeaderMenuData headerMenuData = new DataCollaboration_Base.ViewModels.HeaderMenuData()
+    {
+        DocumentID = Model.IndexPivot.DocumentID,
+        NodeText = Model.NodeText,
+        RowStatus = Model.TagDocumentHeader != null ? Model.TagDocumentHeader.RowStatus : "Add"
+    };
+
+    DataCollaboration_Base.ViewModels.RelatedDoumentModel relatedDoument = new DataCollaboration_Base.ViewModels.RelatedDoumentModel()
+    {
+        DocumentId = Convert.ToString(Model.IndexPivot.DocumentID),
+        DocumentName = "",
+        ScanDate = DateTime.Now.ToString("dd-MMM-yyyy"),
+        ParentDocumentID = Convert.ToString(Model.IndexPivot.DocumentID)
+    };
+
+
+    string invDate_Existing = string.IsNullOrEmpty(Model.IndexPivot.Invoice_Date) ? string.Empty : Convert.ToDateTime(Model.IndexPivot.Invoice_Date).ToString("MM/dd/yyyy");
+}
+<script>
+
+    jsonFieldRules =  @Html.Raw(Json.Encode(_fieldRules));
+    //jsonFieldRules = JSON.parse(Json.Encode(_fieldRules);
+    jsonValidationConditions = @Html.Raw(Json.Encode(_validationConditions));
+    jsonDCConfigurations= @Html.Raw(Json.Encode(_dCConfigurations));
+    workFlowId = @Model.WorkFlowID;
+    nodeId = @Model.NodeID;
+    userDetailsID = '@Model.CurrentUserDetailsID';
+    inboxLink = '@Model.InboxLink';
+   // vendorNo_Existing = '@Model.IndexPivot.Vendor_Number';
+   // invoiceNo_Existing = '@Model.IndexPivot.Invoice_Number';
+    vendorNo_Existing =@Html.Raw(Json.Encode(Model.IndexPivot.Vendor_Number));
+    invoiceNo_Existing = @Html.Raw(Json.Encode(Model.IndexPivot.Invoice_Number));
+    invoiceDate_Existing = '@invDate_Existing';
+    invoiceAmount_Existing = '@Model.IndexPivot.Invoice_Amount';
+    isForwardActual = '@Model.IsForwardActual';
+    jsonHeaderParams= @Html.Raw(Json.Encode(_headerParams));
+        //JSON.stringify(jsonObj)
+</script>
+@*<div id="notifications" class="pull-left"></div>*@
+<div class="container" style="padding-right: 0px;">
+    <input type="hidden" id="hdnInboxlink" value="@Model.InboxLink" />
+    <input type="hidden" id="hdnCurrentDate" value="@DateTime.Now.ToString("MM/dd/yyyy")" />
+
+    @Html.Hidden("HdnDocumentID", Model.IndexPivot.DocumentID)
+    @Html.Hidden("hdnIsPONumberApproved", false)
+    @Html.Hidden("hdnIsDetailGridCountValid", false)
+    @Html.Hidden("hdnStaticTrueString", true)
+    @Html.Hidden("hdnStaticTrueString", true)
+    @Html.Hidden("hdnIsReadyToPay")
+    @Html.Hidden("hdnToleranceValue")
+    @Html.Hidden("hdnToleranceNegativeValue")
+
+
+    <div class="col-sm-12">
+        @Html.Partial("_HeadingPartial", @headerMenuData)
+    </div>
+    <div class="tab-content">
+        <div id="HeaderGeneral" class="col-sm-12 tab-pane active">
+            @{
+                if (Model.IsForward)
+                {
+                    <div class="col-sm-12" style="padding-right: 0px;">
+                        @Html.Partial("_ReplyToSenderPartial")
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "General" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12 col-xl-6">
+                        @Html.Partial("_HeaderGeneralPartial", Model)
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "Vendors" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12 col-xl-6">
+                        @Html.Partial("_VendorsPartial", Model)
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "InvoiceAthens" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12">
+                        @Html.Partial("_InvoicesAthensPartial", Model)
+                    </div>
+
+                }
+                @*<div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        @{ *@
+                if (_partialViews.Where(m => m.ViewName == "Invoice" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="@_partialViews.Where(m => m.ViewName == "Invoice" && m.IsApplicable == true).FirstOrDefault().ClassName">
+                        @Html.Partial("_InvoicesPartial", Model)
+                    </div>
+                }
+                if (_partialViews.Where(m => m.ViewName == "Payments" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="@_partialViews.Where(m => m.ViewName == "Invoice" && m.IsApplicable == true).FirstOrDefault().ClassName">
+                        @Html.Partial("_PaymentsPartial", Model)
+                    </div>
+                }
+                @* }
+                        </div>
+                    </div>*@
+            }
+        </div>
+        <div id="AccountAssignment" class="col-sm-12 tab-pane ">
+            @{
+                if (_partialViews.Where(m => m.ViewName == "APDetails" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12" id="divAccAssignment">
+                        @Html.Partial("_APDetailsPartial", Model)
+                    </div>
+                }
+
+                if (_partialViews.Where(m => m.ViewName == "PODetails" && m.IsApplicable == true).FirstOrDefault() != null)
+                {
+                    <div class="col-sm-12" id="divAccAssignment">
+                        @Html.Partial("_PODetailsPartial", Model)
+                    </div>
+                }
+            }
+        </div>
+
+        @if (!Model.IsForward)
+        {
+            if (_partialViews.Where(m => m.ViewName == "Forward" && m.IsApplicable == true).FirstOrDefault() != null)
+            {
+                <div id="Forward" class="col-sm-12 tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.Partial("_ForwardPartial", Model)
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (_partialViews.Where(m => m.ViewName == "Reject" && m.IsApplicable == true).FirstOrDefault() != null)
+            {
+                <div id="Reject" class="col-sm-12 tab-pane">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @Html.Partial("_RejectPartial", Model)
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @{
+            <div id="RelatedDocuments" class="col-sm-12 tab-pane">
+                <div class="row">
+                    <div class="col-sm-12" style="padding:20px 0px;">
+                        @Html.Partial("_RelatedDocumentPartial", relatedDoument)
+                    </div>
+                </div>
+            </div>
+        }
+
+        @*<div class="row">
+                <div class="col-sm-12">
+                    @Html.Partial("_APInvoiceDetailPartial", Model)
+                </div>
+            </div>*@
+
+
+    </div>
+</div>
+
+@if (!Model.IsForward)
+{
+    <div id="smartlistPopup" style="display: none; max-height:500px!important; width:800px!important;">
+        <table class="table table-hover table-bordered" id="SmartListGrid">
+            <thead>
+                <tr>
+                    <th style="width: 409px; cursor: default!important;" class="sorting_asc" rowspan="1" colspan="1">
+                        ExpenseAccountNumber
+                    </th>
+                    <th style="width: 410px; cursor: default!important;" class="sorting" rowspan="1" colspan="1">
+                        ExpenseAccountDescription
+                    </th>
+                    <th style="width: 143px; cursor: default!important;" class="sorting" rowspan="1" colspan="1">
+                        ExpensedAmount
+                    </th>
+                    <th style="width: 43px; cursor: default!important;" class="sorting" rowspan="1" colspan="1"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <hr />
+        <div class="pull-left">
+            <span id="lblSmartlistAmountErr" class="warningMsg" style="display:inline-block;color:#C00000;width:100%;"></span>
+        </div>
+        <div class="pull-right">
+            <button type="button" id="btnOk" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+            <button type="button" id="btnCancel" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+        </div>
+    </div>
+
+    <!--approvers popup-->
+    <div id="ApprovepanelPopup" class="panel panel-primary" style="margin-left: 2px;margin-top:0px;margin-right:18px;font-family:Helvetica !important">
+        <div class="panel-body">
+            <div class="col-md-6 col-sm-6">
+                @Html.Label("Approve", htmlAttributes: new { @class = "DCformLabel", @style = "font-family:Helvetica !important" })
+                <div class="form-group">
+                    <select id="ddlApprove" class="form-control input-sm DCformField" style="font-family:Helvetica !important">
+                        <option>Select</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pull-right">
+                <button type="button" id="btnSendToApprover" class="btn btn-primary" style="width: 80px!important;"> Ok</button>
+                <button type="button" id="btnCloseApprover" class="btn btn-danger" style="width: 80px!important;"> Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!--approvers popup-->
+}
+<script>
+    var JsonDetailsData = @Html.Raw(Json.Encode(Model.TagDocumentDetail));
+    var fieldRules =@Html.Raw(Json.Encode(ViewData["FieldRules"]));
+</script>
+
+@*@Scripts.Render("~/Scripts/DCScripts/DateFormat.js")
+    @Scripts.Render("~/Scripts/DCScripts/Utility.js")
+    @Scripts.Render("~/Scripts/DCScripts/ApInvoiceValidation.js")
+    @Scripts.Render("~/Scripts/DCScripts/ApInvoice.js")
+    @Scripts.Render("~/Scripts/DCScripts/ApInvoiceDetails.js")
+    @Scripts.Render("~/Scripts/DCScripts/relatedDocuments.js")*@

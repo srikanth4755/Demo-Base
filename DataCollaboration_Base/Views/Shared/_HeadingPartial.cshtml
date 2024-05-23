@@ -1,0 +1,174 @@
+﻿
+@model DataCollaboration_Base.ViewModels.HeaderMenuData
+@{
+    var _fieldRules = (List<DCCommon.FieldRules>)ViewData["FieldRules"];
+
+    object DefaultButtonHtmlAttr(string className, bool isDisabled)
+
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-primary " + className, @type = "button", @disabled = "disabled" };
+        else
+            return new { @class = "btn btn-primary " + className, @type = "button" };
+    }
+
+    object SuccessButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-success " + className, @type = "button", @disabled = "disabled" };
+        else
+            return new { @class = "btn btn-success " + className, @type = "button" };
+    }
+
+
+    object ForwardButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-success " + className, @type = "button", @disabled = "disabled", @style = "display:none; border-radius: 5px; min-width: 97px !important;" };
+        else
+            return new { @class = "btn btn-success " + className, @type = "button", @style = "display:none; border-radius: 5px; min-width: 97px !important;" };
+    }
+    object RejectButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-danger " + className, @type = "button", @disabled = "disabled", @style = "display:none; border-radius: 5px; min-width: 97px !important;" };
+        else
+            return new { @class = "btn btn-danger " + className, @type = "button", @style = "display:none; border-radius: 5px; min-width: 97px !important;" };
+    }
+
+    object UploadButtonHtmlAttr(string className, bool isDisabled)
+    {
+        if (isDisabled)
+            return new { @class = "btn btn-warning " + className, @type = "button", @disabled = "disabled" };
+        else
+            return new { @class = "btn btn-warning " + className, @type = "button" };
+    }
+
+
+}
+<div class="row">
+    <div class="col-sm-12 col-xs-12">
+        <div class="col-sm-8 col-xs-4" id="divDocumentID">
+            <div class="pull-Left dc_headLabel" style="margin-left: -13px;"><span><b>Document ID:</b></span> @Html.LabelFor(m => m.DocumentID, Model.DocumentID.ToString(), new { @style = "font-weight: normal;" })</div>
+        </div>
+        <div class="col-sm-4 col-xs-12" style="text-align:right" id="divCurrentNode">
+            <div class="pull-Left dc_headLabel" style="margin-left: -13px;">
+                <span><b>Current Node:</b></span> @Html.LabelFor(m => m.NodeText, Model.NodeText.ToString(), new { @style = "font-weight: normal;" })
+                @Html.HiddenFor(m => m.NodeText)
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-xs-12">
+        <div id="tab" class="btn-group pull-left nav nav-tabs" data-toggle="buttons-radio" role="tablist">
+            @*<a href="#HeaderGeneral" id="hrefHeaderGeneral" class="btn btn-default active" role="tab" data-toggle="tab">Header</a>
+        <a href="#AccountAssignment" id="hrefAccountAssignment" class="btn btn-default" role="tab" data-toggle="tab">Account Assignment</a>
+        <a href="#Reject" id="hrefRejects" class="btn btn-default" role="tab" data-toggle="tab">Reject</a>
+        <a href="#Forward" id="hrefForward" class="btn btn-default" role="tab" data-toggle="tab">Forward</a>*@
+            @{
+                var headerTabField = _fieldRules.Where(m => m.FieldName == "HeaderTab" && m.IsVisible == true).FirstOrDefault();
+                if (headerTabField != null)
+                {
+                    if (headerTabField.IsReadOnly)
+                    {
+                        <a href="#HeaderGeneral" id="hrefHeaderGeneral" class="btn btn-default active" role="tab" data-toggle="tab" disabled="disabled">@headerTabField.FieldLabelValue</a>
+                    }
+                    else
+                    {
+                        <a href="#HeaderGeneral" id="hrefHeaderGeneral" class="btn btn-default active" role="tab" data-toggle="tab">@headerTabField.FieldLabelValue</a>
+                    }
+                }
+                var accountAssignmentTabField = _fieldRules.Where(m => m.FieldName == "AccountAssignmentTab" && m.IsVisible == true).FirstOrDefault();
+                if (accountAssignmentTabField != null)
+                {
+                    if (accountAssignmentTabField.IsReadOnly)
+                    {
+                        <a href="#AccountAssignment" id="hrefAccountAssignment" class="btn btn-default" role="tab" data-toggle="tab" disabled="disabled">@accountAssignmentTabField.FieldLabelValue</a>
+                    }
+                    else
+                    {
+                        <a href="#AccountAssignment" id="hrefAccountAssignment" class="btn btn-default" role="tab" data-toggle="tab">@accountAssignmentTabField.FieldLabelValue</a>
+                    }
+                }
+                var rejectTabField = _fieldRules.Where(m => m.FieldName == "RejectTab" && m.IsVisible == true).FirstOrDefault();
+                if (rejectTabField != null)
+                {
+                    if (rejectTabField.IsReadOnly)
+                    {
+                        <a href="#Reject" id="hrefRejects" class="btn btn-default" role="tab" data-toggle="tab" disabled="disabled">@rejectTabField.FieldLabelValue</a>
+                    }
+                    else
+                    {
+                        <a href="#Reject" id="hrefRejects" class="btn btn-default" role="tab" data-toggle="tab">@rejectTabField.FieldLabelValue</a>
+                    }
+                }
+                var forwardTabField = _fieldRules.Where(m => m.FieldName == "ForwardTab" && m.IsVisible == true).FirstOrDefault();
+                if (forwardTabField != null)
+                {
+                    if (forwardTabField.IsReadOnly)
+                    {
+                        <a href="#Forward" id="hrefForward" class="btn btn-default" role="tab" data-toggle="tab" disabled="disabled">@forwardTabField.FieldLabelValue</a>
+                    }
+                    else
+                    {
+                        <a href="#Forward" id="hrefForward" class="btn btn-default" role="tab" data-toggle="tab">@forwardTabField.FieldLabelValue</a>
+                    }
+                }
+
+
+               
+            }
+        </div>
+        <div id="notifications" class="pull-left"></div>
+        <div class="btn-group pull-right" style="margin-right: 17px;" role="tablist">
+            @{
+                var ReplyToSenderButtonField = _fieldRules.Where(m => m.FieldName == "ReplyToSenderButton" && m.IsVisible == true).FirstOrDefault();
+                if (ReplyToSenderButtonField != null)
+                {
+                    @Html.TextBox("btnReplyToSender", ReplyToSenderButtonField.FieldLabelValue, htmlAttributes: ReplyToSenderButtonField.IsReadOnly ? SuccessButtonHtmlAttr(ReplyToSenderButtonField.ClassName, true) : SuccessButtonHtmlAttr(ReplyToSenderButtonField.ClassName, false))
+
+                }
+                var submitButtonField = _fieldRules.Where(m => m.FieldName == "SubmitButton" && m.IsVisible == true).FirstOrDefault();
+                if (submitButtonField != null)
+                {
+                    @Html.TextBox("btnSubmit", submitButtonField.FieldLabelValue, htmlAttributes: submitButtonField.IsReadOnly ? SuccessButtonHtmlAttr(submitButtonField.ClassName, true) : SuccessButtonHtmlAttr(submitButtonField.ClassName, false))
+
+                }
+                var forwardToButtonField = _fieldRules.Where(m => m.FieldName == "ForwardToButton" && m.IsVisible == true).FirstOrDefault();
+                if (forwardToButtonField != null)
+                {
+
+                    @Html.TextBox("btnForwardTo", forwardToButtonField.FieldLabelValue, htmlAttributes: forwardToButtonField.IsReadOnly ? ForwardButtonHtmlAttr(forwardToButtonField.ClassName, true) : ForwardButtonHtmlAttr(forwardToButtonField.ClassName, false))
+                }
+                var rejectButtonField = _fieldRules.Where(m => m.FieldName == "RejectButton" && m.IsVisible == true).FirstOrDefault();
+                if (rejectButtonField != null)
+                {
+                    @Html.TextBox("btnReject", rejectButtonField.FieldLabelValue, htmlAttributes: rejectButtonField.IsReadOnly ? RejectButtonHtmlAttr(rejectButtonField.ClassName, true) : RejectButtonHtmlAttr(rejectButtonField.ClassName, false))
+                }
+                var saveButtonField = _fieldRules.Where(m => m.FieldName == "SaveButton" && m.IsVisible == true).FirstOrDefault();
+                if (saveButtonField != null)
+                {
+                    @Html.TextBox("btnSave", saveButtonField.FieldLabelValue, htmlAttributes: saveButtonField.IsReadOnly ? DefaultButtonHtmlAttr(saveButtonField.ClassName, true) : DefaultButtonHtmlAttr(saveButtonField.ClassName, false))
+                }
+               
+                var uploadTabField = _fieldRules.Where(m => m.FieldName == "RelatedDocumentTab" && m.IsVisible == true).FirstOrDefault();
+                if (uploadTabField != null)
+                {
+                    if (uploadTabField.IsReadOnly)
+                    {
+                        <a href="#RelatedDocuments" id="hrefRelatedDocuments" class="btn btn-warning" role="tab" data-toggle="tab" disabled="disabled">@uploadTabField.FieldLabelValue</a>
+                    }
+                    else
+                    {
+                        <a href="#RelatedDocuments" id="hrefRelatedDocuments" class="btn btn-warning" role="tab" data-toggle="tab">@uploadTabField.FieldLabelValue</a>
+                    }
+                }
+
+            }
+        </div>
+        <input type="hidden" id="docId" value=@Model.DocumentID.ToString() />
+        <input type="hidden" id="tagDocHeaderRowstatus" value=@Model.RowStatus />
+    </div>
+
+</div>
